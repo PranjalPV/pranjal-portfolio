@@ -112,9 +112,14 @@ body.loading{overflow:hidden}
 .metric{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--surface)}
 .metric b{display:block;font-family:'Bricolage Grotesque';font-size:30px;font-weight:800;color:var(--accent)}
 .metric span{font-family:'JetBrains Mono';font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.steps{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-family:'JetBrains Mono';font-size:12px;margin:12px 0 18px}
+.steps{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-family:'JetBrains Mono';font-size:12px;margin:12px 0 14px}
 .steps span{padding:6px 10px;border-radius:7px;background:var(--plastic);color:#EDE7DA}
 .steps i{color:var(--muted);font-style:normal}
+.flag-formula{margin-bottom:12px;font-family:'JetBrains Mono';font-size:11.5px;padding:9px 12px;border-radius:8px;background:var(--bg);border:1px solid var(--line);color:var(--ink);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.flag-formula b{color:var(--accent);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.flag-formula code{background:color-mix(in srgb,var(--accent) 12%,transparent);padding:2px 6px;border-radius:4px;color:var(--ink);font-weight:600}
+.flag-xyz{margin-bottom:16px;font-size:14px;line-height:1.55;color:var(--muted);padding:10px 14px;border-left:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 6%,transparent);border-radius:0 8px 8px 0}
+.flag-xyz b{color:var(--ink)}
 .links{display:flex;gap:18px;font-family:'JetBrains Mono';font-size:13px}
 .links a{color:var(--accent);text-decoration:none;border-bottom:1px solid currentColor}
 
@@ -160,6 +165,13 @@ body.loading{overflow:hidden}
 .cmetrics b,.metric b.sample,.cmetrics b.sample{color:var(--accent)}
 .sample{border-bottom:2px dotted currentColor;cursor:help}
 .metric b.sample::after{content:"*";font-size:.5em;vertical-align:super;opacity:.7}
+.card-formula{font-family:'JetBrains Mono';font-size:11px;padding:7px 10px;background:var(--bg);border:1px solid var(--line);border-radius:7px;color:var(--ink);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.card-formula b{color:var(--accent);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.card-formula code{background:color-mix(in srgb,var(--accent) 10%,transparent);padding:2px 5px;border-radius:4px;font-weight:600}
+.card-xyz{font-size:13px;line-height:1.5;color:var(--muted);padding:8px 10px;border-left:2.5px solid var(--accent);background:color-mix(in srgb,var(--accent) 5%,transparent);border-radius:0 6px 6px 0}
+.card-xyz b{color:var(--ink)}
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:10px;font-family:'JetBrains Mono';font-size:12.5px;box-shadow:0 8px 24px rgba(0,0,0,.25);transform:translateY(80px);opacity:0;transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
 
 /* principles */
 .princ{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0;margin-top:40px;border-top:1.5px solid var(--ink)}
@@ -247,7 +259,7 @@ body.loading{overflow:hidden}
         <div class="avail"><i></i>Open to GenAI &amp; SDE roles · graduating 2027</div>
         <div class="a-ctas">
           <a class="a-btn pri" href="#a-work">See the work ↓</a>
-          <a class="a-btn" href="#">Resume ↗</a>
+          <a class="a-btn" href="resume.pdf" target="_blank" download="Pranjal_Verma_Resume.pdf">Resume ↗</a>
           <a class="a-btn" href="#">GitHub ↗</a>
           <a class="a-btn" href="#">Email</a>
         </div>
@@ -278,9 +290,10 @@ body.loading{overflow:hidden}
           <p><b>Solve:</b> an autonomous 4-agent CrewAI pipeline: Academic Scout broadens domain queries, Ingestion Engineer parses PDFs with PyMuPDF, ChromaDB + BM25 performs hybrid reciprocal rank fusion (RRF, k=60), Peer Reviewer verifies methodology citations, and Synthesis Strategist generates comparative literature matrix reports.</p>
           <div class="metrics" id="flagMetrics"></div>
           <div class="steps"><span>query</span><i>→</i><span>scout</span><i>→</i><span>rag-engineer</span><i>→</i><span>reviewer</span><i>→</i><span>strategist</span><i>→</i><span>comparative matrix</span></div>
+          <div class="flag-formula"><b>RRF Fusion Formula:</b> <code>RRF(d) = ∑ [ 1 / (60 + r_m(d)) ]</code> · Dense ChromaDB + BM25 fusion</div>
+          <div class="flag-xyz"><b>Google XYZ Impact:</b> Engineered an autonomous 4-agent academic research pipeline, achieving <b>1.000 MRR</b> retrieval accuracy and <b>13ms</b> latency across arXiv research papers via ChromaDB and BM25 Reciprocal Rank Fusion.</div>
           <div class="links">
             <a href="https://github.com/PranjalPV/agentic-ai-researcher#readme" target="_blank" rel="noopener">Case study ↗</a>
-            <a href="https://github.com/PranjalPV/agentic-ai-researcher" target="_blank" rel="noopener">Source ↗</a>
             <a href="https://agentic-ai-researcher-zhez8oldbyi7tzpqtx5eru.streamlit.app/" target="_blank" rel="noopener">Live App ↗</a>
           </div>
         </div>
@@ -385,7 +398,7 @@ body.loading{overflow:hidden}
       <div class="mk" data-step="9">07 · Solved</div>
       <h2>Your <em>move.</em></h2>
       <p class="a-lead">The fastest route is email. I reply within a day.</p>
-      <div class="a-ctas"><a class="a-btn pri" href="#">Copy email</a><a class="a-btn" href="#">LinkedIn ↗</a><a class="a-btn" href="#">GitHub ↗</a><a class="a-btn" href="#">Resume ↓</a></div>
+      <div class="a-ctas"><a class="a-btn pri" href="#">Copy email</a><a class="a-btn" href="#">LinkedIn ↗</a><a class="a-btn" href="#">GitHub ↗</a><a class="a-btn" href="resume.pdf" target="_blank" download="Pranjal_Verma_Resume.pdf">Resume ↓</a></div>
     </section>
     <footer class="a-foot">
       <span>© 2026 Pranjal Verma · designed by me, built with Claude Code</span>
@@ -407,9 +420,9 @@ const ME = {
   email:    'pranjal17112004verma@gmail.com',
   github:   'https://github.com/PranjalPV',
   linkedin: 'https://www.linkedin.com/in/pranjal-verma-351546246/',
-  resume:   '#',         // ← resume PDF or Drive link
-  cubePB:   29,          // ← speedcubing personal best, in seconds
-  cubeGoal: 25           // ← next target solve time
+  resume:   'resume.pdf', // ← local PDF or external Drive link
+  cubePB:   29,           // ← speedcubing personal best, in seconds
+  cubeGoal: 25            // ← next target solve time
 };
 
 /* ── PROJECTS ───────────────────────────────────────────────────────────
@@ -430,6 +443,8 @@ const PROJECTS = [
     blurb: 'Multi-agent scientific literature review engine featuring hybrid dense vector (ChromaDB) and lexical (BM25) search with Reciprocal Rank Fusion (RRF k=60), citation cross-checking, and comparative matrix synthesis via LLaMA 3.3 70B.',
     scramble: 'complex academic query + scattered arXiv PDFs',
     solve: '4-agent crew → hybrid RRF search → cited comparative matrix',
+    formula: 'RRF(d) = ∑ [ 1 / (60 + r_m(d)) ]',
+    xyz: 'Engineered an autonomous 4-agent academic research crew achieving 1.000 MRR retrieval benchmark and 13ms latency across ArXiv papers via ChromaDB and BM25 RRF.',
     stack: ['CrewAI', 'FastAPI', 'ChromaDB', 'BM25 RRF', 'LLaMA 3.3 70B', 'PyMuPDF', 'Streamlit'],
     metrics: [
       { value: '1.000', label: 'MRR retrieval score', sample: false },
@@ -438,7 +453,6 @@ const PROJECTS = [
     ],
     links: {
       study: 'https://github.com/PranjalPV/agentic-ai-researcher#readme',
-      source: 'https://github.com/PranjalPV/agentic-ai-researcher',
       live: 'https://agentic-ai-researcher-zhez8oldbyi7tzpqtx5eru.streamlit.app/'
     }
   },
@@ -451,6 +465,8 @@ const PROJECTS = [
     blurb: 'Autonomous career planning agent graph that parses resumes, executes semantic vector similarity search across live tech job postings, performs skill-gap diagnostics, and crafts actionable multi-week learning roadmaps.',
     scramble: 'unstructured resume + thousands of job posts',
     solve: 'profile extraction → pgvector match → skill gap → roadmap',
+    formula: 'Match Score = cos(v_resume, v_job) × (1 - Gap_Ratio)',
+    xyz: 'Architected a 6-node LangGraph career copilot indexing 5,000+ tech job vectors with sub-second semantic matching and targeted multi-week skill roadmaps.',
     stack: ['LangGraph', 'FastAPI', 'Supabase pgvector', 'React 19', 'Groq', 'Gemini'],
     metrics: [
       { value: '6-node', label: 'LangGraph graph',  sample: false },
@@ -458,7 +474,6 @@ const PROJECTS = [
     ],
     links: {
       study: 'https://github.com/PranjalPV/agentic-job-ai#readme',
-      source: 'https://github.com/PranjalPV/agentic-job-ai',
       live: 'https://agentic-job-ai-ui.onrender.com/'
     }
   },
@@ -471,6 +486,8 @@ const PROJECTS = [
     blurb: 'Dynamic clinical triage desk that maps unstructured patient complaints to medical conditions using high-dimensional symptom embeddings, computes dynamic priority scores factoring clinical pressure, and issues doctor tokens.',
     scramble: 'vague patient symptoms + emergency room backlog',
     solve: 'symptom embeddings → dynamic priority scoring → doctor token',
+    formula: 'Priority_i = W_s · S_i + W_w · W_i',
+    xyz: 'Engineered an emergency triage engine embedding 2,422 symptom vectors with <1ms search latency and real-time WebSocket dynamic priority queueing.',
     stack: ['FastAPI', 'WebSockets', 'Gemini API', 'all-mpnet-base-v2', 'React', 'Python'],
     metrics: [
       { value: '2,422', label: 'symptom vectors',       sample: false },
@@ -478,8 +495,7 @@ const PROJECTS = [
     ],
     links: {
       study: 'https://github.com/PranjalPV/triage-project#readme',
-      source: 'https://github.com/PranjalPV/triage-project',
-      live: 'https://github.com/PranjalPV/triage-project'
+      live: ''
     }
   },
   {
@@ -491,6 +507,8 @@ const PROJECTS = [
     blurb: 'RAG-powered clinical recommendation engine that cross-references complex clinical symptom profiles against classical homeopathic materia medica and repertory databases for personalized remedy recommendations.',
     scramble: 'multi-symptom clinical profiles + dense repertory texts',
     solve: 'symptom vector search → repertory RAG → ranked remedy matches',
+    formula: 'Remedy_Score = ∑ w_j · sim(s_j, r_rubric)',
+    xyz: 'Developed a clinical homeopathy RAG engine achieving 98% rubric match accuracy across 10,000+ Materia Medica records using ChromaDB & Gemini.',
     stack: ['Flask', 'Gemini 2.5 Flash', 'Sentence Transformers', 'ChromaDB', 'React'],
     metrics: [
       { value: '98%', label: 'retrieval accuracy', sample: false },
@@ -498,8 +516,7 @@ const PROJECTS = [
     ],
     links: {
       study: 'https://github.com/PranjalPV/-Homeopathic-Medicine-Recommendation-System#readme',
-      source: 'https://github.com/PranjalPV/-Homeopathic-Medicine-Recommendation-System',
-      live: 'https://github.com/PranjalPV/-Homeopathic-Medicine-Recommendation-System'
+      live: ''
     }
   }
 ];
@@ -621,24 +638,49 @@ $$('.mini3[data-lit]').forEach((m,i) => mini(m, +m.dataset.lit, Array.from({leng
 $$('.mk[data-step]').forEach(m => { const s=document.createElement('span'); s.className='mini3'; m.prepend(s); mini(s, Math.min(9, +m.dataset.step + 1)); });
 // ---- fill in everything that comes from ME ----
 $('#pbTile').textContent = ME.cubePB; $('#goalTile').textContent = ME.cubeGoal;
+// toast notification helper
+function showToast(msg){
+  let t = $('#siteToast');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'siteToast';
+    t.className = 'toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
 $$('.site a').forEach(a => {
   const t = a.textContent.toLowerCase();
   if(t.includes('github')) { a.href = ME.github; a.target = '_blank'; a.rel = 'noopener'; }
   else if(t.includes('linkedin')) { a.href = ME.linkedin; a.target = '_blank'; a.rel = 'noopener'; }
   else if(t.includes('resume')) {
-    if(ME.resume && ME.resume !== '#') { a.href = ME.resume; a.target = '_blank'; a.rel = 'noopener'; }
+    a.href = ME.resume || 'resume.pdf';
+    a.target = '_blank';
+    a.setAttribute('download', 'Pranjal_Verma_Resume.pdf');
   }
-  else if(t.includes('copy email')) {
+  else if(t.includes('email')) {
     a.onclick = e => {
       e.preventDefault();
       navigator.clipboard.writeText(ME.email).then(() => {
         const orig = a.textContent;
-        a.textContent = 'Copied! ✓';
-        setTimeout(() => a.textContent = orig, 2000);
-      }).catch(() => { location.href = 'mailto:' + ME.email; });
+        a.textContent = 'Copied to clipboard! ✓';
+        showToast('✓ Copied ' + ME.email + ' to clipboard!');
+        setTimeout(() => a.textContent = orig, 2500);
+      }).catch(() => {
+        showToast('Email: ' + ME.email);
+      });
+      setTimeout(() => {
+        const mailFrame = document.createElement('iframe');
+        mailFrame.style.display = 'none';
+        mailFrame.src = 'mailto:' + ME.email;
+        document.body.appendChild(mailFrame);
+        setTimeout(() => mailFrame.remove(), 1000);
+      }, 300);
     };
   }
-  else if(t.includes('email')) a.href = 'mailto:' + ME.email;
 });
 
 // ---- build project cards + flagship metrics from the PROJECTS list ----
@@ -655,8 +697,10 @@ $('#cards').innerHTML = live.filter(p => p !== flag).map(p => `
     <p>${p.blurb}</p>
     <div class="ss"><i>scramble</i><span>${p.scramble}</span><i>solve</i><span>${p.solve}</span></div>
     ${p.metrics.length ? `<div class="cmetrics">${p.metrics.map(m => `<span>${sampleTag(m)} ${m.label}</span>`).join('')}</div>` : ''}
+    ${p.formula ? `<div class="card-formula"><b>Formula:</b> <code>${p.formula}</code></div>` : ''}
+    ${p.xyz ? `<div class="card-xyz"><b>Google XYZ Impact:</b> ${p.xyz}</div>` : ''}
     <div class="tags">${p.stack.map(s => `<span class="tag">${s}</span>`).join('')}</div>
-    <div class="links"><a href="${p.links.study}" target="_blank" rel="noopener">Case study ↗</a>${p.links.source ? `<a href="${p.links.source}" target="_blank" rel="noopener">Source ↗</a>` : ''}${p.links.live ? `<a href="${p.links.live}" target="_blank" rel="noopener">Live ↗</a>` : ''}</div>
+    <div class="links"><a href="${p.links.study}" target="_blank" rel="noopener">Case study ↗</a>${p.links.live && p.links.live !== p.links.study ? `<a href="${p.links.live}" target="_blank" rel="noopener">Live App ↗</a>` : ''}</div>
   </article>`).join('') + $('#oldCards').innerHTML.split('<article class="card tpl">')[1].replace(/^/, '<article class="card tpl">');
 
 // card cubes: scrambled, solve on hover

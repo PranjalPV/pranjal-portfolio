@@ -1,0 +1,48 @@
+%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >> endobj
+4 0 obj << /Length 2181 >>
+stream
+BT
+/F2 22 Tf 50 730 Td (PRANJAL VERMA) Tj
+/F1 11 Tf 0 -22 Td (Lucknow, India  |  pranjal17112004verma@gmail.com  |  github.com/PranjalPV) Tj
+/F1 11 Tf 0 -16 Td (linkedin.com/in/pranjal-verma-351546246/  |  portfolio: pranjalpv.github.io) Tj
+/F2 13 Tf 0 -30 Td (EDUCATION) Tj
+/F1 10 Tf 0 -16 Td (B.Tech in Computer Science and Engineering  |  Amity University, Lucknow (2023 - 2027)) Tj
+/F1 10 Tf 0 -14 Td (CGPA: 8.63 / 10.0  |  50% Merit Scholarship  |  Class XII: 93.25% (City Montessori School)) Tj
+/F2 13 Tf 0 -28 Td (FEATURED AI PROJECTS) Tj
+/F2 11 Tf 0 -18 Td (1. Agentic AI Academic Researcher 2.0 (CrewAI, FastAPI, ChromaDB, LLaMA 3.3 70B)) Tj
+/F1 10 Tf 0 -14 Td (- Built an autonomous 4-agent academic research crew achieving 1.000 MRR retrieval benchmark.) Tj
+/F1 10 Tf 0 -14 Td (- Implemented Reciprocal Rank Fusion (RRF k=60) combining ChromaDB dense vectors and BM25 lexical search.) Tj
+/F2 11 Tf 0 -22 Td (2. Agentic Job Recommender & Career Copilot (LangGraph, FastAPI, Supabase pgvector)) Tj
+/F1 10 Tf 0 -14 Td (- Developed a 6-node LangGraph agent graph indexing 5,000+ tech job vectors with sub-second retrieval.) Tj
+/F1 10 Tf 0 -14 Td (- Implemented semantic cosine matching, skill-gap diagnostics, and automated multi-week roadmaps.) Tj
+/F2 11 Tf 0 -22 Td (3. Adaptive Patient Triage & Priority Engine (FastAPI, WebSockets, all-mpnet-base-v2)) Tj
+/F1 10 Tf 0 -14 Td (- Embedded 2,422 clinical symptom vectors with <1ms cosine search latency and dynamic emergency priority scoring.) Tj
+/F2 13 Tf 0 -28 Td (CORE TECHNICAL SKILLS) Tj
+/F1 10 Tf 0 -16 Td (Languages & Frameworks: Python, FastAPI, Flask, Java, C++, React, WebSockets) Tj
+/F1 10 Tf 0 -14 Td (GenAI & Vector Stores: LangGraph, CrewAI, ChromaDB, Supabase pgvector, BM25, Gemini API, Groq) Tj
+/F2 13 Tf 0 -28 Td (LEADERSHIP & RECOGNITION) Tj
+/F1 10 Tf 0 -16 Td (- Student Placement Coordinator: Led readiness and interview preparation for 300+ CS students.) Tj
+/F1 10 Tf 0 -14 Td (- Peer Mentor: Mentored 20+ junior engineering students in CS fundamentals and career planning.) Tj
+/F1 10 Tf 0 -14 Td (- Hackathon Winner (2024): Awarded 1st place for intelligent web platform architecture.) Tj
+ET
+endstream
+endstream
+endobj
+5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj
+6 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >> endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000002484 00000 n 
+0000002554 00000 n 
+trailer << /Size 7 /Root 1 0 R >>
+startxref
+2629
+%%EOF
