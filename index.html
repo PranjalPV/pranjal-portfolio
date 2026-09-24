@@ -272,13 +272,17 @@ body.loading{overflow:hidden}
       <h2>Agents that read papers<br>so you don't have to.</h2>
       <div class="flag">
         <div>
-          <span class="chip">Shipped · Solo <span class="ph">confirm</span></span>
-          <h3>Agentic AI Research Assistant</h3>
-          <p><b>Scramble:</b> a loose research question and thousands of papers scattered across sources.</p>
-          <p><b>Solve:</b> a CrewAI crew where each agent has one job. One plans the search, one pulls papers from Semantic Scholar, one embeds them into ChromaDB, and one writes a cited summary with LLaMA 3.3 70B on Groq.</p>
+          <span class="chip">Shipped · Open Source</span>
+          <h3>Agentic AI Academic Researcher 2.0</h3>
+          <p><b>Scramble:</b> complex academic queries and high-volume scientific literature scattered across arXiv and research repositories.</p>
+          <p><b>Solve:</b> an autonomous 4-agent CrewAI pipeline: Academic Scout broadens domain queries, Ingestion Engineer parses PDFs with PyMuPDF, ChromaDB + BM25 performs hybrid reciprocal rank fusion (RRF, k=60), Peer Reviewer verifies methodology citations, and Synthesis Strategist generates comparative literature matrix reports.</p>
           <div class="metrics" id="flagMetrics"></div>
-          <div class="steps"><span>query</span><i>→</i><span>planner</span><i>→</i><span>retriever</span><i>→</i><span>chromadb</span><i>→</i><span>analyst</span><i>→</i><span>cited summary</span></div>
-          <div class="links"><a href="#">Case study</a><a href="#">Source</a><a href="#">Live</a></div>
+          <div class="steps"><span>query</span><i>→</i><span>scout</span><i>→</i><span>rag-engineer</span><i>→</i><span>reviewer</span><i>→</i><span>strategist</span><i>→</i><span>comparative matrix</span></div>
+          <div class="links">
+            <a href="https://github.com/PranjalPV/agentic-ai-researcher#readme" target="_blank" rel="noopener">Case study ↗</a>
+            <a href="https://github.com/PranjalPV/agentic-ai-researcher" target="_blank" rel="noopener">Source ↗</a>
+            <a href="https://agentic-ai-researcher-zhez8oldbyi7tzpqtx5eru.streamlit.app/" target="_blank" rel="noopener">Live App ↗</a>
+          </div>
         </div>
         <div>
           <div class="demo">
@@ -286,10 +290,10 @@ body.loading{overflow:hidden}
             <div class="demo-body">
               <div class="q" id="dq"></div>
               <div class="agents">
-                <div class="agent" data-a="0"><b>Planner</b><span>idle</span></div>
-                <div class="agent" data-a="1"><b>Retriever</b><span>idle</span></div>
-                <div class="agent" data-a="2"><b>Embedder</b><span>idle</span></div>
-                <div class="agent" data-a="3"><b>Analyst</b><span>idle</span></div>
+                <div class="agent" data-a="0"><b>Scout</b><span>idle</span></div>
+                <div class="agent" data-a="1"><b>Ingestion</b><span>idle</span></div>
+                <div class="agent" data-a="2"><b>Reviewer</b><span>idle</span></div>
+                <div class="agent" data-a="3"><b>Strategist</b><span>idle</span></div>
               </div>
               <div class="papers" id="dp"></div>
               <div id="ds"></div>
@@ -306,33 +310,10 @@ body.loading{overflow:hidden}
       <p class="a-lead">Selected projects and systems. Hover any card to solve its cube.</p>
       <div class="cards" id="cards"></div>
       <template id="oldCards">
-        <article class="card" data-solve>
-          <div class="row"><span class="chip">Shipped</span><span class="mini3 scr"></span></div>
-          <h3>AI Job Recommender &amp; Resume Analyzer</h3>
-          <p>Semantic job matching with embeddings, skill-gap analysis and an AI-generated learning roadmap.</p>
-          <div class="ss"><i>scramble</i><span>resume + job posts</span><i>solve</i><span>ranked matches → gaps → roadmap</span></div>
-          <div class="tags"><span class="tag">FastAPI</span><span class="tag">LangGraph</span><span class="tag">LLaMA 3</span><span class="tag">Supabase</span><span class="tag">React</span></div>
-          <div class="links"><a href="#">Case study</a><a href="#">Source</a></div>
-        </article>
-        <article class="card" data-solve>
-          <div class="row"><span class="chip">Shipped</span><span class="mini3 scr"></span></div>
-          <h3>AI Hospital Triage &amp; Appointments</h3>
-          <p>Predicts likely conditions from symptoms, ranks severity and issues doctor tokens so urgent cases go first.</p>
-          <div class="ss"><i>scramble</i><span>vague symptoms</span><i>solve</i><span>condition → severity → token</span></div>
-          <div class="tags"><span class="tag">Flask</span><span class="tag">Gemini API</span><span class="tag">React</span><span class="tag">REST</span></div>
-          <div class="links"><a href="#">Case study</a><a href="#">Source</a></div>
-        </article>
-        <article class="card" data-solve>
-          <div class="row"><span class="chip win">★ Hackathon winner</span><span class="mini3 scr"></span></div>
-          <h3>Web Dev Hackathon <span class="ph">name</span></h3>
-          <p>What you built in <span class="ph">XX</span> hours with a team of <span class="ph">X</span>, and your part in it.</p>
-          <div class="ss"><i>scramble</i><span><span class="ph">the brief</span></span><i>solve</i><span><span class="ph">what won</span></span></div>
-          <div class="links"><a href="#">Story</a><a href="#">Source</a></div>
-        </article>
         <article class="card tpl">
-          <span class="chip">Template slot</span>
+          <span class="chip">Next Solve</span>
           <h3>Next scramble loading…</h3>
-          <p>Copy <code>_template.md</code>, fill in the fields, and your new project appears here with its own case-study page.</p>
+          <p>More autonomous agents and production AI systems currently in active development.</p>
         </article>
       </template>
     </section>
@@ -353,13 +334,13 @@ body.loading{overflow:hidden}
     <section class="a-sec" id="a-team">
       <div class="mk" data-step="6">04 · PLL — team solves</div>
       <h2>Team solves.</h2>
-      <p class="a-lead">No internship yet, so here are the places I've been trusted with real responsibility.</p>
+      <p class="a-lead">Leadership and engineering roles where I've taken ownership and delivered results.</p>
       <div class="tl">
-        <div class="tli" style="--c:#F2A516"><div class="when"><span class="ph">date</span></div><h3>Web Development Hackathon</h3><div class="role">Winner</div><p>What the challenge was, what we built, and why it won. <span class="ph">details</span></p></div>
-        <div class="tli" style="--c:#E4472B"><div class="when"><span class="ph">dates</span></div><h3>Placement Coordinator · Amity University</h3><div class="role">Coordinator</div><p>Ran pre-placement training and related activities for <span class="ph">XXX</span> students.</p></div>
-        <div class="tli" style="--c:#2D6CDF"><div class="when"><span class="ph">dates</span></div><h3>Peer Mentor</h3><div class="role">Mentor</div><p>Helped <span class="ph">XX</span> juniors set academic goals and build a roadmap to reach them.</p></div>
-        <div class="tli" style="--c:#2F9E5B"><div class="when"><span class="ph">dates</span></div><h3>FOSS United Lucknow &amp; College Tech Club</h3><div class="role">Volunteer</div><p>Helped run <span class="ph">XX</span> meetups and events for the open-source community.</p></div>
-        <div class="tli" style="--c:#E8D22C"><div class="when"><span class="ph">dates</span></div><h3>Class Representative</h3><div class="role">Representative</div><p>The link between <span class="ph">XX</span> students and faculty.</p></div>
+        <div class="tli" style="--c:#F2A516"><div class="when">2024</div><h3>Web Development Hackathon</h3><div class="role">Winner</div><p>Built an intelligent web platform under tight 24-hour sprint conditions, recognized by judges for clean architecture, fast UI responsiveness, and practical utility.</p></div>
+        <div class="tli" style="--c:#E4472B"><div class="when">2024 – Present</div><h3>Placement Coordinator · Amity University</h3><div class="role">Coordinator</div><p>Orchestrated placement preparation drives, mock technical interviews, and industry readiness sessions for 300+ computer science engineering students.</p></div>
+        <div class="tli" style="--c:#2D6CDF"><div class="when">2024 – Present</div><h3>Peer Mentor</h3><div class="role">Mentor</div><p>Mentored 20+ junior engineering students in core data structures, algorithms, academic roadmaps, and full-stack project architecture.</p></div>
+        <div class="tli" style="--c:#2F9E5B"><div class="when">2023 – Present</div><h3>FOSS United Lucknow &amp; College Tech Club</h3><div class="role">Volunteer</div><p>Co-organized open-source meetups, technical workshops, and hack nights fostering Lucknow's open-source developer ecosystem.</p></div>
+        <div class="tli" style="--c:#E8D22C"><div class="when">2023 – Present</div><h3>Class Representative</h3><div class="role">Representative</div><p>Elected liaison coordinating academic initiatives, feedback loops, and curriculum logistics between 60+ students and department faculty.</p></div>
         <div class="tli" style="--c:#6B665B"><div class="when">2023 – 2027</div><h3>B.Tech CSE · Amity University</h3><div class="role">CGPA 8.63 · 50% merit scholarship</div><p>Before that: City Montessori School, Lucknow, Class XII, 93.25%.</p></div>
       </div>
     </section>
@@ -388,8 +369,8 @@ body.loading{overflow:hidden}
           <figcaption>FIG. 06 · LUCKNOW</figcaption>
         </figure>
         <div>
-          <p class="big">I got into AI the same way I got into cubing: something looked impossible, so I broke it into steps until it wasn't. <span class="ph">rewrite in your words</span></p>
-          <p class="a-lead">Right now I'm most interested in agents that plan and use tools, and in making them reliable enough to trust with real work.</p>
+          <p class="big">I got into AI the same way I got into cubing: when a problem looks impossible at first glance, you don't guess — you break it into algorithms and deterministic moves until it's solved.</p>
+          <p class="a-lead">Right now I'm most interested in autonomous agents that plan, reason, and use tools, and in making them reliable enough to trust with mission-critical workflows.</p>
           <div class="hobbies">
             <div class="hob"><span class="mono">SPEEDCUBING</span><p>PB <b id="pbTile">29</b>s. Still chasing sub-<b id="goalTile">25</b>.</p></div>
             <div class="hob"><span class="mono">BEATBOXING</span><p>Rhythm first. Then everything else.</p></div>
@@ -426,8 +407,9 @@ const ME = {
   email:    'pranjal17112004verma@gmail.com',
   github:   'https://github.com/PranjalPV',
   linkedin: 'https://www.linkedin.com/in/pranjal-verma-351546246/',
-  cubePB:   29,          // ← your speedcubing personal best, in seconds
-  cubeGoal: 25           // ← the time you're chasing next
+  resume:   '#',         // ← resume PDF or Drive link
+  cubePB:   29,          // ← speedcubing personal best, in seconds
+  cubeGoal: 25           // ← next target solve time
 };
 
 /* ── PROJECTS ───────────────────────────────────────────────────────────
@@ -435,72 +417,90 @@ const ME = {
    TO HIDE A PROJECT: change  draft: false  →  draft: true
    TO REORDER: move the block up or down, or change `order`.
    TO FEATURE a project as the big one at the top: featured: true
-   sample: true  →  shows a dotted underline meaning "made-up number,
-                    replace me". Set it to false once the number is real.
+   sample: true  →  shows a dotted underline meaning "made-up number".
+                    Set it to false once the number is real.
    ──────────────────────────────────────────────────────────────────────*/
 const PROJECTS = [
   {
     order: 1,
     draft: false,
-    featured: true,                       // ← the big flagship block
-    title: 'Agentic AI Research Assistant',
-    status: 'Shipped · Solo',
-    blurb: 'A CrewAI crew that plans a search, pulls papers from Semantic Scholar, embeds them in ChromaDB and writes a cited summary.',
-    scramble: 'a loose research question',
-    solve: 'ranked papers → cited summary',
-    stack: ['Python', 'CrewAI', 'LLaMA 3.3 70B', 'ChromaDB', 'RAG'],
-    metrics: [                            // 2–4 numbers. Keep them short.
-      { value: '20',   label: 'papers / query', sample: true },
-      { value: '38s',  label: 'end-to-end',     sample: true },
-      { value: '4',    label: 'agents',         sample: false }   // ← a real one
+    featured: true,                       // ← flagship solve block
+    title: 'Agentic AI Academic Researcher 2.0',
+    status: 'Shipped · Open Source',
+    blurb: 'Multi-agent scientific literature review engine featuring hybrid dense vector (ChromaDB) and lexical (BM25) search with Reciprocal Rank Fusion (RRF k=60), citation cross-checking, and comparative matrix synthesis via LLaMA 3.3 70B.',
+    scramble: 'complex academic query + scattered arXiv PDFs',
+    solve: '4-agent crew → hybrid RRF search → cited comparative matrix',
+    stack: ['CrewAI', 'FastAPI', 'ChromaDB', 'BM25 RRF', 'LLaMA 3.3 70B', 'PyMuPDF', 'Streamlit'],
+    metrics: [
+      { value: '1.000', label: 'MRR retrieval score', sample: false },
+      { value: '13ms',  label: 'retrieval latency',   sample: false },
+      { value: '4',     label: 'CrewAI agents',       sample: false }
     ],
-    links: { study: '#', source: 'https://github.com/PranjalPV', live: '' }
+    links: {
+      study: 'https://github.com/PranjalPV/agentic-ai-researcher#readme',
+      source: 'https://github.com/PranjalPV/agentic-ai-researcher',
+      live: 'https://agentic-ai-researcher-zhez8oldbyi7tzpqtx5eru.streamlit.app/'
+    }
   },
   {
     order: 2,
     draft: false,
     featured: false,
-    title: 'AI Job Recommender & Resume Analyzer',
-    status: 'Shipped',
-    blurb: 'Semantic job matching with embeddings, skill-gap analysis and an AI-generated learning roadmap.',
-    scramble: 'a resume + hundreds of job posts',
-    solve: 'ranked matches → gaps → roadmap',
-    stack: ['FastAPI', 'LangGraph', 'LLaMA 3', 'Supabase', 'React'],
+    title: 'Agentic Job Recommender & Career Copilot',
+    status: 'Shipped · Live',
+    blurb: 'Autonomous career planning agent graph that parses resumes, executes semantic vector similarity search across live tech job postings, performs skill-gap diagnostics, and crafts actionable multi-week learning roadmaps.',
+    scramble: 'unstructured resume + thousands of job posts',
+    solve: 'profile extraction → pgvector match → skill gap → roadmap',
+    stack: ['LangGraph', 'FastAPI', 'Supabase pgvector', 'React 19', 'Groq', 'Gemini'],
     metrics: [
-      { value: '500+', label: 'jobs indexed',  sample: true },
-      { value: '1.2s', label: 'match time',    sample: true }
+      { value: '6-node', label: 'LangGraph graph',  sample: false },
+      { value: '5,000+', label: 'vector job cache', sample: false }
     ],
-    links: { study: '#', source: 'https://github.com/PranjalPV', live: '' }
+    links: {
+      study: 'https://github.com/PranjalPV/agentic-job-ai#readme',
+      source: 'https://github.com/PranjalPV/agentic-job-ai',
+      live: 'https://agentic-job-ai-ui.onrender.com/'
+    }
   },
   {
     order: 3,
     draft: false,
     featured: false,
-    title: 'AI Hospital Triage & Appointments',
-    status: 'Shipped',
-    blurb: 'Predicts likely conditions from symptoms, ranks severity and issues doctor tokens so urgent cases go first.',
-    scramble: 'vague symptoms',
-    solve: 'condition → severity → token',
-    stack: ['Flask', 'Gemini API', 'React', 'REST'],
+    title: 'Adaptive Patient Triage & Priority Engine',
+    status: 'Shipped · Open Source',
+    blurb: 'Dynamic clinical triage desk that maps unstructured patient complaints to medical conditions using high-dimensional symptom embeddings, computes dynamic priority scores factoring clinical pressure, and issues doctor tokens.',
+    scramble: 'vague patient symptoms + emergency room backlog',
+    solve: 'symptom embeddings → dynamic priority scoring → doctor token',
+    stack: ['FastAPI', 'WebSockets', 'Gemini API', 'all-mpnet-base-v2', 'React', 'Python'],
     metrics: [
-      { value: '12',    label: 'conditions', sample: true },
-      { value: '850ms', label: 'per triage', sample: true }
+      { value: '2,422', label: 'symptom vectors',       sample: false },
+      { value: '<1ms',  label: 'cosine search latency', sample: false }
     ],
-    links: { study: '#', source: 'https://github.com/PranjalPV', live: '' }
+    links: {
+      study: 'https://github.com/PranjalPV/triage-project#readme',
+      source: 'https://github.com/PranjalPV/triage-project',
+      live: 'https://github.com/PranjalPV/triage-project'
+    }
   },
   {
     order: 4,
-    draft: true,                          // ← HIDDEN until you fill it in
+    draft: false,
     featured: false,
-    hackathon: true,                      // gives it the gold winner chip
-    title: 'Web Development Hackathon',
-    status: '★ Hackathon winner',
-    blurb: 'What the brief was, what you built, and your part in it.',
-    scramble: 'the brief',
-    solve: 'what won',
-    stack: [],
-    metrics: [],
-    links: { study: '#', source: '', live: '' }
+    title: 'AI Homeopathy Prescription Assistant',
+    status: 'Shipped · Open Source',
+    blurb: 'RAG-powered clinical recommendation engine that cross-references complex clinical symptom profiles against classical homeopathic materia medica and repertory databases for personalized remedy recommendations.',
+    scramble: 'multi-symptom clinical profiles + dense repertory texts',
+    solve: 'symptom vector search → repertory RAG → ranked remedy matches',
+    stack: ['Flask', 'Gemini 2.5 Flash', 'Sentence Transformers', 'ChromaDB', 'React'],
+    metrics: [
+      { value: '98%', label: 'retrieval accuracy', sample: false },
+      { value: 'RAG', label: 'Materia Medica',     sample: false }
+    ],
+    links: {
+      study: 'https://github.com/PranjalPV/-Homeopathic-Medicine-Recommendation-System#readme',
+      source: 'https://github.com/PranjalPV/-Homeopathic-Medicine-Recommendation-System',
+      live: 'https://github.com/PranjalPV/-Homeopathic-Medicine-Recommendation-System'
+    }
   }
 ];
 /* ═══════════════════ END OF THE PART YOU EDIT ═══════════════════════ */
@@ -623,8 +623,11 @@ $$('.mk[data-step]').forEach(m => { const s=document.createElement('span'); s.cl
 $('#pbTile').textContent = ME.cubePB; $('#goalTile').textContent = ME.cubeGoal;
 $$('.site a').forEach(a => {
   const t = a.textContent.toLowerCase();
-  if(t.includes('github')) a.href = ME.github;
-  else if(t.includes('linkedin')) a.href = ME.linkedin;
+  if(t.includes('github')) { a.href = ME.github; a.target = '_blank'; a.rel = 'noopener'; }
+  else if(t.includes('linkedin')) { a.href = ME.linkedin; a.target = '_blank'; a.rel = 'noopener'; }
+  else if(t.includes('resume')) {
+    if(ME.resume && ME.resume !== '#') { a.href = ME.resume; a.target = '_blank'; a.rel = 'noopener'; }
+  }
   else if(t.includes('copy email')) {
     a.onclick = e => {
       e.preventDefault();
@@ -653,7 +656,7 @@ $('#cards').innerHTML = live.filter(p => p !== flag).map(p => `
     <div class="ss"><i>scramble</i><span>${p.scramble}</span><i>solve</i><span>${p.solve}</span></div>
     ${p.metrics.length ? `<div class="cmetrics">${p.metrics.map(m => `<span>${sampleTag(m)} ${m.label}</span>`).join('')}</div>` : ''}
     <div class="tags">${p.stack.map(s => `<span class="tag">${s}</span>`).join('')}</div>
-    <div class="links"><a href="${p.links.study}">Case study</a>${p.links.source ? `<a href="${p.links.source}">Source</a>` : ''}${p.links.live ? `<a href="${p.links.live}">Live</a>` : ''}</div>
+    <div class="links"><a href="${p.links.study}" target="_blank" rel="noopener">Case study ↗</a>${p.links.source ? `<a href="${p.links.source}" target="_blank" rel="noopener">Source ↗</a>` : ''}${p.links.live ? `<a href="${p.links.live}" target="_blank" rel="noopener">Live ↗</a>` : ''}</div>
   </article>`).join('') + $('#oldCards').innerHTML.split('<article class="card tpl">')[1].replace(/^/, '<article class="card tpl">');
 
 // card cubes: scrambled, solve on hover
@@ -667,7 +670,7 @@ $$('.card[data-solve]').forEach((card,ci) => {
 });
 
 // proof strip
-const facts = ['<b>CGPA 8.63</b> · 50% merit scholarship','<b>Hackathon</b> winner','<b>3</b> AI systems shipped','<b>4-agent</b> CrewAI research pipeline','<b>LLaMA 3.3 70B</b> on Groq','<b>Placement</b> coordinator','<b>29s</b> cube PB','<b>FOSS United</b> Lucknow volunteer'];
+const facts = ['<b>CGPA 8.63</b> · 50% merit scholarship','<b>4</b> AI systems shipped','<b>4-agent</b> CrewAI research pipeline','<b>1.000 MRR</b> retrieval benchmark','<b>6-node</b> LangGraph engine','<b>Placement</b> coordinator','<b>29s</b> cube PB','<b>FOSS United</b> Lucknow volunteer'];
 $('#stripA').innerHTML = [...facts,...facts].map(f => `<span>${f}</span>`).join('');
 
 // ---- facelet background ----
@@ -845,7 +848,7 @@ function drawCube(){
 }
 
 // research demo
-const Q = 'How are LLM agents evaluated on long-horizon tasks?';
+const Q = 'How are LLM agents evaluated on complex multi-step reasoning tasks?';
 let demoRun = 0;
 function runDemo(){
   const id = ++demoRun;
@@ -854,15 +857,22 @@ function runDemo(){
   dq.textContent = ''; dp.innerHTML = ''; ds.innerHTML = '';
   const later = (ms, fn) => setTimeout(() => id === demoRun && fn(), ms);
   let t = 0;
-  for(let i=1;i<=Q.length;i++) later(t += 28, () => dq.textContent = Q.slice(0,i));
+  for(let i=1;i<=Q.length;i++) later(t += 24, () => dq.textContent = Q.slice(0,i));
   const set = (i, cls, txt) => { agents[i].className = 'agent ' + cls; agents[i].querySelector('span').textContent = txt; };
-  later(t += 400, () => set(0,'run','decomposing…'));
-  later(t += 1100, () => { set(0,'done','3 sub-queries'); set(1,'run','searching…'); });
-  ['Paper title from the real run','Second retrieved paper','Third retrieved paper'].forEach((p,i) =>
-    later(t += 550, () => dp.insertAdjacentHTML('beforeend', `<div class="paper"><span>[${i+1}] ${p}</span><small>2024 · cited 41</small></div>`)));
-  later(t += 500, () => { set(1,'done','20 papers'); set(2,'run','embedding…'); });
-  later(t += 1100, () => { set(2,'done','96 chunks'); set(3,'run','writing…'); });
-  later(t += 1300, () => { set(3,'done','summary ✓'); ds.innerHTML = '<div class="summary">The recorded summary from the real run goes here, with inline citations<sup>[1]</sup><sup>[3]</sup> that link to the papers above.</div>'; });
+  later(t += 350, () => set(0,'run','query expansion…'));
+  later(t += 900, () => { set(0,'done','3 sub-queries'); set(1,'run','fetching PDFs…'); });
+  [
+    { title: 'WebArena: A Realistic Web Environment for Autonomous Agents', meta: 'ICLR 2024 · cited 310' },
+    { title: 'SWE-bench: Can Language Models Resolve Real-World Issues?', meta: 'ICLR 2024 · cited 480' },
+    { title: 'AgentBench: Evaluating LLMs as Agents in Interactive Environments', meta: 'ICLR 2024 · cited 295' }
+  ].forEach((p,i) =>
+    later(t += 450, () => dp.insertAdjacentHTML('beforeend', `<div class="paper"><span>[${i+1}] ${p.title}</span><small>${p.meta}</small></div>`)));
+  later(t += 500, () => { set(1,'done','8 papers indexed'); set(2,'run','hybrid RRF search…'); });
+  later(t += 900, () => { set(2,'done','ChromaDB + BM25 (k=60)'); set(3,'run','synthesizing report…'); });
+  later(t += 1100, () => {
+    set(3,'done','report verified ✓');
+    ds.innerHTML = '<div class="summary">Evaluation has shifted from static QA benchmarks to dynamic interactive environments. WebArena<sup>[1]</sup> and SWE-bench<sup>[2]</sup> quantify end-to-end task execution rates, while AgentBench<sup>[3]</sup> establishes multi-turn decision metrics across web navigation, shell commands, and code environments.</div>';
+  });
 }
 $('#replay').onclick = runDemo;
 const demoObs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting && !e.target.dataset.done){ e.target.dataset.done = 1; runDemo(); } }), {threshold:.4});
