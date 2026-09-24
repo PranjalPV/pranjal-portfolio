@@ -1,0 +1,1532 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio Concept Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&family=Geist:wght@400;500;700&family=Geist+Mono:wght@400;600&family=Big+Shoulders+Display:wght@700;900&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#F3EFE6;overflow-x:hidden}
+a{color:inherit}
+button{font:inherit;cursor:pointer}
+.site{display:none;min-height:100vh;position:relative}
+body[data-theme="a"] .site-a,body[data-theme="b"] .site-b,body[data-theme="c"] .site-c{display:block}
+body[data-theme="b"]{background:#0A0B0A}
+body[data-theme="c"]{background:#111010}
+.bg-canvas{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 28px}
+@media (max-width:600px){.wrap{padding:0 16px}}
+
+/* ---------- loader ---------- */
+.loader{position:fixed;inset:0;z-index:200;background:#F3EFE6;transition:opacity .55s ease,visibility .55s}
+.loader.gone{opacity:0;visibility:hidden;pointer-events:none}
+.lmeta{position:absolute;left:0;right:0;bottom:64px;display:flex;justify-content:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#6B665B}
+/* full-screen field of blocks that push out of the page in 3D */
+.lfield{position:absolute;inset:0;overflow:hidden}
+.lt{position:absolute;background:#FBFAF6;border-radius:5px;
+    box-shadow:0 0 0 1px rgba(23,21,15,.07);
+    transition:box-shadow .6s cubic-bezier(.16,.84,.26,1),transform .6s cubic-bezier(.16,.84,.26,1);}
+.lt.up{transform:translate(calc(var(--dx) * .34), calc(var(--dy) * .34)) scale(1.012);
+       box-shadow:var(--dx) var(--dy) 0 0 var(--side), 0 0 0 1px rgba(23,21,15,.12)}
+.lcore{position:absolute;left:50%;top:50%;width:118px;height:118px;margin:-59px 0 0 -59px;border-radius:10px;
+       background:#E4472B;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+       font-family:'JetBrains Mono',monospace;border:0;
+       box-shadow:16px 14px 0 -1px #B9331D, 0 0 0 1px rgba(23,21,15,.18);
+       transition:transform .5s cubic-bezier(.16,.84,.26,1),box-shadow .5s}
+.lcore b{font-family:'Bricolage Grotesque',sans-serif;font-size:30px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.lcore span{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;opacity:.85}
+.lcore.ready{cursor:pointer;transform:translate(-3px,-3px);box-shadow:22px 20px 0 -1px #B9331D, 0 0 0 1px rgba(23,21,15,.18)}
+.lcore.ready:hover{transform:translate(-6px,-6px)}
+@media (max-width:520px){.lcore{width:96px;height:96px;margin:-48px 0 0 -48px}}
+body.loading{overflow:hidden}
+
+/* ---------- plan notes (shared) ---------- */
+.note{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.5;background:#FFF1A6;color:#2B2710;border:1px solid #E6D46A;padding:8px 11px;border-radius:4px;box-shadow:0 6px 16px -8px rgba(0,0,0,.35);max-width:340px;transform:rotate(-.6deg);margin:14px 0;position:relative;z-index:2}
+.note b{display:block;font-size:10px;letter-spacing:.14em;color:#8A7512;margin-bottom:2px}
+body.no-notes .note{display:none}
+
+/* ---------- switcher (shared) ---------- */
+.switcher{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:100;display:flex;align-items:center;gap:4px;padding:6px;border-radius:999px;background:rgba(20,19,17,.92);backdrop-filter:blur(8px);box-shadow:0 12px 30px -10px rgba(0,0,0,.5);font-family:'JetBrains Mono',monospace;font-size:12px;color:#CFC8B8;max-width:calc(100vw - 24px);overflow-x:auto}
+.switcher span.lbl{padding:0 10px 0 12px;white-space:nowrap;color:#8F887A}
+.switcher button{border:0;background:transparent;color:#CFC8B8;padding:9px 14px;border-radius:999px;white-space:nowrap}
+.switcher button.on{background:#F3EFE6;color:#17150F}
+.switcher .sep{width:1px;height:20px;background:#3A3730;margin:0 4px}
+@media (max-width:640px){.switcher span.lbl{display:none}.switcher button{padding:8px 10px}}
+
+/* =====================================================
+   THEME A — SCRAMBLE → SOLVE
+   ===================================================== */
+.site-a{--bg:#F3EFE6;--surface:#FBF9F4;--ink:#17150F;--muted:#6B665B;--line:#D9D3C5;--accent:#E4472B;--plastic:#17150F;background:var(--bg);color:var(--ink);font-family:'Source Serif 4',Georgia,serif;transition:background .4s,color .4s}
+.site-a.dark{--bg:#131210;--surface:#1C1A17;--ink:#EDE7DA;--muted:#9A9384;--line:#2C2924;--accent:#FF6A4A;--plastic:#0A0908}
+.site-a h1,.site-a h2,.site-a h3,.site-a .disp{font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-.03em}
+.site-a .mono{font-family:'JetBrains Mono',monospace}
+.a-nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+.a-logo{display:flex;align-items:center;gap:10px;font-family:'Bricolage Grotesque';font-weight:800;font-size:18px;text-decoration:none}
+.mini3{display:inline-grid;grid-template-columns:repeat(3,6px);gap:2px;padding:3px;background:var(--plastic);border-radius:4px;vertical-align:middle}
+.mini3 i{width:6px;height:6px;border-radius:1.5px;background:#4A463D;transition:background .3s}
+.a-links{display:flex;gap:26px;align-items:center;font-family:'JetBrains Mono';font-size:13px}
+.a-links a{text-decoration:none;color:var(--muted)}
+.a-links a:hover{color:var(--ink)}
+.a-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:10px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);font-family:'JetBrains Mono';font-size:13px;text-decoration:none;transition:transform .15s,background .2s,color .2s}
+.a-btn:hover{transform:translateY(-2px)}
+.a-btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.a-toggle{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:7px 10px;font-family:'JetBrains Mono';font-size:12px}
+@media (max-width:760px){.a-links a{display:none}}
+
+.a-hero{display:grid;grid-template-columns:7fr 5fr;gap:40px;align-items:center;min-height:calc(100vh - 90px);padding-bottom:60px}
+@media (max-width:900px){.a-hero{grid-template-columns:1fr;min-height:auto;padding-top:30px}}
+.mk{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.a-hero h1{font-size:clamp(46px,7.2vw,96px);line-height:.94;font-weight:800}
+.a-hero h1 em{font-style:normal;color:var(--accent)}
+.a-sub{font-size:clamp(18px,1.6vw,21px);line-height:1.6;color:var(--muted);max-width:56ch;margin:26px 0 22px}
+.a-sub strong{color:var(--ink);font-weight:600}
+.avail{display:inline-flex;align-items:center;gap:9px;font-family:'JetBrains Mono';font-size:12.5px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);margin-bottom:26px}
+.avail i{width:8px;height:8px;border-radius:50%;background:#2F9E5B;box-shadow:0 0 0 0 rgba(47,158,91,.6);animation:ping 2s infinite}
+@keyframes ping{70%{box-shadow:0 0 0 8px rgba(47,158,91,0)}100%{box-shadow:0 0 0 0 rgba(47,158,91,0)}}
+.a-ctas{display:flex;flex-wrap:wrap;gap:10px}
+
+/* cube */
+.cube-zone{display:flex;flex-direction:column;align-items:center;gap:20px;user-select:none}
+.scene{width:320px;height:320px;max-width:86vw;perspective:1100px;position:relative;cursor:grab;touch-action:none}
+.scene:active{cursor:grabbing}
+.cube{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d}
+.cubie{position:absolute;width:60px;height:60px;margin:-30px 0 0 -30px;transform-style:preserve-3d}
+.cface{position:absolute;inset:0;background:#0C0B09;border-radius:9px;backface-visibility:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6)}
+.cface.out{background:var(--sticker);background-image:linear-gradient(145deg,rgba(255,255,255,.28),rgba(0,0,0,.22));border:3px solid #0C0B09;border-radius:11px;box-shadow:inset 0 1px 2px rgba(255,255,255,.35),inset 0 -2px 4px rgba(0,0,0,.3)}
+.cube-ctrl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.cube-ctrl button{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 13px;border-radius:8px;font-family:'JetBrains Mono';font-size:12px}
+.cube-ctrl button:hover{border-color:var(--ink)}
+.cube-hint{font-family:'JetBrains Mono';font-size:12px;color:var(--muted);text-align:center;min-height:18px}
+.cube-hint b{color:var(--accent);font-weight:600}
+
+/* proof strip */
+.strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;background:color-mix(in srgb,var(--bg) 70%,transparent);position:relative;z-index:1}
+.strip-in{display:flex;gap:44px;white-space:nowrap;padding:15px 0;width:max-content;animation:marq 38s linear infinite;font-family:'JetBrains Mono';font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.strip-in b{color:var(--ink);font-weight:600}
+.strip-in span::before{content:"■";color:var(--accent);margin-right:12px;font-size:9px;vertical-align:2px}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+.a-sec{padding:110px 0 30px}
+.a-sec h2{font-size:clamp(34px,4.6vw,58px);line-height:1;font-weight:800;margin-bottom:14px}
+.a-lead{font-size:19px;line-height:1.65;color:var(--muted);max-width:62ch}
+.ph{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);padding:0 5px;border-radius:4px;font-family:'JetBrains Mono';font-size:.85em}
+
+/* flagship */
+.flag{display:grid;grid-template-columns:5fr 6fr;gap:40px;margin-top:40px;align-items:start}
+@media (max-width:900px){.flag{grid-template-columns:1fr}}
+.flag h3{font-size:32px;line-height:1.05;font-weight:800;margin:6px 0 14px}
+.flag p{font-size:18px;line-height:1.65;margin-bottom:14px}
+.flag p b{font-weight:600}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0}
+.tag{font-family:'JetBrains Mono';font-size:11.5px;padding:4px 9px;border:1px solid var(--line);border-radius:6px;color:var(--muted);background:var(--surface)}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.metric{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--surface)}
+.metric b{display:block;font-family:'Bricolage Grotesque';font-size:30px;font-weight:800;color:var(--accent)}
+.metric span{font-family:'JetBrains Mono';font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.steps{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-family:'JetBrains Mono';font-size:12px;margin:12px 0 18px}
+.steps span{padding:6px 10px;border-radius:7px;background:var(--plastic);color:#EDE7DA}
+.steps i{color:var(--muted);font-style:normal}
+.links{display:flex;gap:18px;font-family:'JetBrains Mono';font-size:13px}
+.links a{color:var(--accent);text-decoration:none;border-bottom:1px solid currentColor}
+
+.demo{background:var(--surface);border:1.5px solid var(--ink);border-radius:18px;overflow:hidden;box-shadow:10px 10px 0 var(--ink)}
+.site-a.dark .demo{box-shadow:10px 10px 0 #000}
+.demo-top{display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:1.5px solid var(--ink);font-family:'JetBrains Mono';font-size:11.5px;letter-spacing:.08em}
+.demo-top button{border:1.5px solid var(--ink);background:var(--bg);color:var(--ink);padding:5px 10px;border-radius:7px;font-size:11.5px;font-family:'JetBrains Mono'}
+.demo-body{padding:18px}
+.q{font-family:'JetBrains Mono';font-size:14px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);min-height:46px}
+.q::after{content:"▍";color:var(--accent);animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.agents{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+@media (max-width:520px){.agents{grid-template-columns:repeat(2,1fr)}}
+.agent{border:1px solid var(--line);border-radius:10px;padding:10px;font-family:'JetBrains Mono';font-size:11.5px;transition:all .3s;background:var(--bg)}
+.agent b{display:block;font-size:12.5px;color:var(--ink);margin-bottom:3px}
+.agent span{color:var(--muted)}
+.agent.run{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+.agent.done{border-color:#2F9E5B}
+.agent.done span{color:#2F9E5B}
+.papers{display:grid;gap:7px;min-height:10px}
+.paper{display:flex;justify-content:space-between;gap:10px;border-left:3px solid #2D6CDF;padding:8px 10px;background:var(--bg);border-radius:0 8px 8px 0;font-size:14px;animation:slidein .35s ease-out}
+.paper small{font-family:'JetBrains Mono';font-size:11px;color:var(--muted);white-space:nowrap}
+@keyframes slidein{from{opacity:0;transform:translateY(6px)}}
+.summary{margin-top:12px;font-size:15.5px;line-height:1.6;padding:12px 14px;border-radius:10px;background:color-mix(in srgb,#2F9E5B 10%,transparent);border:1px solid color-mix(in srgb,#2F9E5B 40%,transparent);animation:slidein .4s}
+.summary sup{color:#2D6CDF;font-family:'JetBrains Mono';font-size:10px}
+
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-top:40px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:10px;transition:transform .25s,border-color .25s,box-shadow .25s;position:relative}
+.card:hover{transform:translateY(-4px);border-color:var(--ink);box-shadow:0 18px 30px -18px rgba(0,0,0,.35)}
+.card .row{display:flex;justify-content:space-between;align-items:center}
+.chip{font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;border-radius:5px;background:var(--bg);border:1px solid var(--line)}
+.chip.win{background:#F2A516;border-color:#F2A516;color:#17150F}
+.card h3{font-size:23px;line-height:1.1;font-weight:800}
+.card p{font-size:16px;line-height:1.55;color:var(--muted)}
+.ss{font-family:'JetBrains Mono';font-size:11.5px;display:grid;grid-template-columns:auto 1fr;gap:3px 10px;padding:10px;border-radius:9px;background:var(--bg)}
+.ss i{font-style:normal;color:var(--muted)}
+.card .mini3 i{width:8px;height:8px}.card .mini3{grid-template-columns:repeat(3,8px)}
+.card.tpl{border:2px dashed var(--line);background:transparent;justify-content:center;align-items:flex-start;min-height:260px}
+.card.tpl:hover{border-color:var(--accent)}
+.card.tpl code{font-family:'JetBrains Mono';font-size:12px;background:var(--surface);padding:2px 6px;border-radius:5px}
+.cmetrics{display:flex;flex-wrap:wrap;gap:14px;font-family:'JetBrains Mono';font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.cmetrics b,.metric b.sample,.cmetrics b.sample{color:var(--accent)}
+.sample{border-bottom:2px dotted currentColor;cursor:help}
+.metric b.sample::after{content:"*";font-size:.5em;vertical-align:super;opacity:.7}
+
+/* principles */
+.princ{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0;margin-top:40px;border-top:1.5px solid var(--ink)}
+.pr{padding:22px 22px 26px 0;border-bottom:1px solid var(--line)}
+.pr .mono{font-size:12px;color:var(--accent)}
+.pr h3{font-size:22px;margin:8px 0}
+.pr p{color:var(--muted);line-height:1.55;font-size:16.5px}
+
+/* timeline */
+.tl{margin-top:40px;position:relative;padding-left:34px}
+.tl::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:repeating-linear-gradient(var(--line) 0 6px,transparent 6px 11px)}
+.tli{position:relative;padding:0 0 30px}
+.tli::before{content:"";position:absolute;left:-31px;top:5px;width:14px;height:14px;border-radius:4px;background:var(--c,#6B665B);box-shadow:0 0 0 4px var(--bg)}
+.tli .when{font-family:'JetBrains Mono';font-size:12px;color:var(--muted);letter-spacing:.06em}
+.tli h3{font-size:22px;margin:3px 0 4px}
+.tli .role{font-family:'JetBrains Mono';font-size:12.5px;color:var(--accent);margin-bottom:6px}
+.tli p{color:var(--muted);line-height:1.55;max-width:62ch;font-size:16.5px}
+
+/* skills */
+.algs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+@media (max-width:860px){.algs{grid-template-columns:1fr}}
+.alg{border:1.5px solid var(--ink);border-radius:16px;padding:20px;background:var(--surface)}
+.alg h3{font-size:14px;font-family:'JetBrains Mono';letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px;display:flex;justify-content:space-between}
+.alg h3 span{color:var(--muted);font-weight:400}
+.alg ul{list-style:none;display:grid;gap:8px}
+.alg li{display:flex;align-items:center;gap:10px;font-size:17px}
+.alg li .mono{margin-left:auto;font-size:11px;color:var(--muted)}
+
+/* about */
+.about{display:grid;grid-template-columns:4fr 7fr;gap:44px;margin-top:40px;align-items:start}
+@media (max-width:860px){.about{grid-template-columns:1fr}}
+.photo{position:relative;border-radius:18px;overflow:hidden;background:#EE7B3C;border:1.5px solid var(--ink);box-shadow:8px 8px 0 var(--ink)}
+.photo::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(0,0,0,.12) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(0,0,0,.12) 1.5px,transparent 1.5px);background-size:46px 46px}
+.photo img{position:relative;display:block;width:100%;filter:grayscale(1) contrast(1.06)}
+.photo figcaption{position:absolute;left:0;right:0;bottom:0;padding:9px 12px;background:var(--ink);color:var(--bg);font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.14em}
+.about p.big{font-size:21px;line-height:1.65;margin-bottom:16px}
+.hobbies{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:26px}
+@media (max-width:600px){.hobbies{grid-template-columns:1fr}}
+.hob{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--surface)}
+.hob .mono{font-size:11px;letter-spacing:.12em;color:var(--accent)}
+.hob p{margin-top:6px;font-size:16px;line-height:1.45}
+
+/* contact */
+.contact{padding:140px 0 120px;text-align:left}
+.contact h2{font-size:clamp(64px,12vw,170px);line-height:.85;font-weight:800;letter-spacing:-.05em}
+.contact h2 em{font-style:normal;color:var(--accent)}
+.contact .a-lead{margin:24px 0}
+.a-foot{border-top:1px solid var(--line);padding:22px 0 100px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-family:'JetBrains Mono';font-size:12px;color:var(--muted)}
+.a-foot kbd{border:1px solid var(--line);border-radius:4px;padding:1px 6px;background:var(--surface)}
+
+/* timer */
+.timer{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(6px)}
+.timer.on{display:flex}
+.timer b{font-family:'JetBrains Mono';font-size:clamp(56px,12vw,140px);font-weight:600;letter-spacing:-.03em}
+.timer span{font-family:'JetBrains Mono';font-size:13px;color:var(--muted)}
+
+/* =====================================================
+   THEME B — AGENT TRACE
+   ===================================================== */
+.site-b{--bg:#0A0B0A;--surface:#111311;--ink:#E9ECE6;--muted:#838B80;--line:#20241E;--acc:#C6F24E;--acc2:#7CD4FF;--acc3:#FF8F6B;background:var(--bg);color:var(--ink);font-family:'Geist',sans-serif}
+.b-nav{display:flex;justify-content:space-between;align-items:center;padding:20px 0;font-family:'Geist Mono';font-size:13px}
+.b-nav .logo b{color:var(--acc)}
+.b-nav nav{display:flex;gap:22px;color:var(--muted)}
+@media (max-width:700px){.b-nav nav{display:none}}
+.b-hero{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;min-height:calc(100vh - 80px);padding-bottom:60px}
+@media (max-width:900px){.b-hero{grid-template-columns:1fr;min-height:auto;padding-top:30px}}
+.b-status{font-family:'Geist Mono';font-size:12px;color:var(--acc);display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.b-status i{width:8px;height:8px;border-radius:50%;background:var(--acc);animation:pulse 1.2s infinite}
+@keyframes pulse{50%{opacity:.25}}
+.b-hero h1{font-size:clamp(42px,6vw,78px);line-height:1;letter-spacing:-.045em;font-weight:700}
+.b-hero h1 span{color:var(--acc)}
+.b-hero p{color:var(--muted);font-size:18px;line-height:1.6;margin:22px 0 28px;max-width:50ch}
+.b-btn{display:inline-block;padding:12px 18px;border-radius:8px;border:1px solid var(--line);font-family:'Geist Mono';font-size:13px;text-decoration:none;margin:0 8px 8px 0;background:var(--surface)}
+.b-btn.pri{background:var(--acc);color:#0A0B0A;border-color:var(--acc)}
+.term{background:rgba(17,19,17,.9);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-family:'Geist Mono';font-size:12.5px;box-shadow:0 30px 60px -30px rgba(198,242,78,.2)}
+.term-top{display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--line);color:var(--muted);font-size:11.5px}
+.term-top i{display:inline-block;width:9px;height:9px;border-radius:50%;background:#2A2F28;margin-right:5px}
+.term-body{padding:14px;height:340px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;gap:5px}
+.tline{display:flex;gap:10px;animation:slidein .25s ease-out;line-height:1.45}
+.tline .t{color:#4F564C;white-space:nowrap}
+.tline .who{white-space:nowrap;min-width:84px}
+.b-sec{padding:100px 0 20px}
+.b-sec h2{font-size:clamp(32px,4.4vw,52px);letter-spacing:-.04em;font-weight:700;margin-bottom:10px}
+.b-sec .lead{color:var(--muted);font-size:17px;max-width:60ch;line-height:1.6}
+.b-kicker{font-family:'Geist Mono';font-size:12px;color:var(--acc);margin-bottom:12px}
+.runs{display:grid;gap:12px;margin-top:36px}
+.run{display:grid;grid-template-columns:150px 1fr auto;gap:22px;align-items:center;padding:20px 22px;border:1px solid var(--line);border-radius:14px;background:var(--surface);transition:border-color .2s}
+.run:hover{border-color:var(--acc)}
+@media (max-width:760px){.run{grid-template-columns:1fr}}
+.run .id{font-family:'Geist Mono';font-size:12px;color:var(--muted)}
+.run .id b{display:block;color:var(--acc);font-weight:600;margin-top:4px}
+.run h3{font-size:21px;letter-spacing:-.02em;margin-bottom:8px}
+.pipe{display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-family:'Geist Mono';font-size:11.5px}
+.pipe span{padding:3px 8px;border-radius:5px;background:#191C18;border:1px solid var(--line)}
+.pipe i{color:#4F564C;font-style:normal}
+.run .dur{font-family:'Geist Mono';font-size:12px;color:var(--muted);text-align:right}
+.run.queued{border-style:dashed;background:transparent}
+.run.queued .id b{color:var(--acc3)}
+.logs{margin-top:30px;font-family:'Geist Mono';font-size:13.5px;border:1px solid var(--line);border-radius:14px;padding:18px 20px;background:var(--surface);line-height:2}
+.logs .k{color:var(--acc2)}.logs .v{color:var(--muted)}
+.b-contact{padding:130px 0 110px}
+.b-contact h2{font-size:clamp(44px,8vw,110px);letter-spacing:-.05em;line-height:.95;font-weight:700}
+.b-contact .cmd{margin-top:28px;display:inline-flex;gap:10px;padding:16px 20px;border:1px solid var(--acc);border-radius:10px;font-family:'Geist Mono';font-size:15px;background:rgba(198,242,78,.06)}
+.b-contact .cmd b{color:var(--acc)}
+.b-foot{border-top:1px solid var(--line);padding:20px 0 100px;font-family:'Geist Mono';font-size:12px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.site-b .note{margin-top:18px}
+
+/* =====================================================
+   THEME C — BEAT LAB
+   ===================================================== */
+.site-c{--bg:#111010;--surface:#1A1818;--ink:#F4EADB;--muted:#9C9285;--line:#2A2726;--y:#FFD43B;--p:#FF5A5F;background:var(--bg);color:var(--ink);font-family:'Manrope',sans-serif}
+.c-nav{display:flex;justify-content:space-between;align-items:center;padding:20px 0;font-weight:800;font-size:14px;letter-spacing:.04em}
+.c-nav .snd{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;font-size:12px;font-weight:600}
+.c-nav .snd.on{background:var(--y);color:#111;border-color:var(--y)}
+.c-hero{min-height:calc(100vh - 80px);display:flex;flex-direction:column;justify-content:center;padding-bottom:80px}
+.c-side{font-size:13px;font-weight:800;letter-spacing:.24em;color:var(--y);margin-bottom:10px}
+.c-hero h1{font-family:'Big Shoulders Display';font-weight:900;font-size:clamp(76px,16vw,220px);line-height:.82;letter-spacing:-.01em;text-transform:uppercase}
+.c-hero h1 span{color:transparent;-webkit-text-stroke:2px var(--ink)}
+.c-hero .tag2{font-size:clamp(18px,2vw,24px);margin:22px 0 30px;max-width:40ch;line-height:1.45;color:var(--muted)}
+.c-hero .tag2 b{color:var(--ink)}
+.pads{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.pad{width:84px;height:84px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:800;font-size:22px;transition:transform .08s,background .15s,border-color .15s}
+.pad small{font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:600}
+.pad.hit{transform:scale(.93);background:var(--y);color:#111;border-color:var(--y)}
+.pad.hit small{color:#111}
+.pad.p2.hit{background:var(--p);border-color:var(--p)}
+.pads .hint{font-size:13px;color:var(--muted);margin-left:8px;max-width:22ch;line-height:1.4}
+.c-sec{padding:100px 0 20px}
+.c-sec h2{font-family:'Big Shoulders Display';font-size:clamp(48px,7vw,96px);line-height:.9;text-transform:uppercase;font-weight:900;margin-bottom:10px}
+.c-sec .lead{color:var(--muted);font-size:17px;line-height:1.6;max-width:58ch}
+.tracks{margin-top:36px;border-top:2px solid var(--ink)}
+.track{border-bottom:1px solid var(--line)}
+.trow{width:100%;display:grid;grid-template-columns:56px 50px 1fr auto;gap:14px;align-items:center;padding:20px 4px;background:transparent;border:0;color:var(--ink);text-align:left}
+.trow:hover{background:var(--surface)}
+.trow .n{font-family:'Big Shoulders Display';font-size:30px;font-weight:900;color:var(--muted)}
+.play{width:40px;height:40px;border-radius:50%;background:var(--ink);color:#111;display:flex;align-items:center;justify-content:center;font-size:13px}
+.track.open .play{background:var(--y)}
+.trow h3{font-size:clamp(18px,2.2vw,26px);font-weight:800;letter-spacing:-.01em}
+.trow .by{font-size:13px;color:var(--muted);margin-top:2px}
+.trow .len{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+@media (max-width:600px){.trow{grid-template-columns:40px 1fr auto}.trow .n{display:none}}
+.tdetail{display:none;padding:0 4px 26px 124px;color:var(--muted);line-height:1.6;font-size:16px}
+@media (max-width:600px){.tdetail{padding-left:4px}}
+.track.open .tdetail{display:block}
+.eq{display:flex;gap:3px;align-items:flex-end;height:28px;margin-bottom:12px}
+.eq i{width:5px;background:var(--y);border-radius:2px;animation:eq .8s ease-in-out infinite alternate}
+@keyframes eq{from{height:4px}to{height:28px}}
+.tdetail .pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.tdetail .pills span{font-size:12px;border:1px solid var(--line);padding:4px 10px;border-radius:999px;color:var(--ink)}
+.track.bonus .trow h3{color:var(--muted);font-style:italic}
+.liner{margin-top:36px;display:grid;grid-template-columns:1fr 1fr;gap:10px 60px}
+@media (max-width:760px){.liner{grid-template-columns:1fr}}
+.lrow{display:flex;align-items:baseline;gap:8px;font-size:16px;padding:6px 0}
+.lrow .dots{flex:1;border-bottom:2px dotted var(--line);transform:translateY(-4px)}
+.lrow b{font-weight:800}
+.lrow span{color:var(--muted);text-align:right}
+.c-contact{padding:140px 0 110px;text-align:center}
+.c-contact h2{font-family:'Big Shoulders Display';font-weight:900;font-size:clamp(90px,20vw,280px);line-height:.8;text-transform:uppercase}
+.c-contact h2 span{color:var(--y)}
+.c-contact p{color:var(--muted);font-size:18px;margin:20px 0 30px}
+.c-btn{display:inline-block;background:var(--y);color:#111;font-weight:800;padding:16px 26px;border-radius:999px;text-decoration:none;margin:4px}
+.c-btn.o{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.c-foot{border-top:1px solid var(--line);padding:20px 0 100px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.site-c .note{margin:18px auto 0}
+.center-note{display:flex;justify-content:center}
+
+@media (prefers-reduced-motion:reduce){.strip-in,.eq i,.b-status i,.avail i{animation:none}}
+</style>
+</head>
+<body data-theme="a">
+
+<!-- ============ LOADER (built by JS into this host) ============ -->
+<div id="loaderHost"></div>
+
+<!-- ============ SWITCHER ============ -->
+<div class="switcher" role="tablist" aria-label="Choose concept">
+  <span class="lbl">CONCEPT</span>
+  <button data-t="a" class="on">A · Scramble→Solve</button>
+  <button data-t="b">B · Agent Trace</button>
+  <button data-t="c">C · Beat Lab</button>
+  <span class="sep"></span>
+  <span class="lbl">LOADER</span>
+  <button id="ldTiles" title="Replay the loading screen">↻ replay</button>
+  <span class="sep"></span>
+  <button id="noteBtn" title="Show or hide the yellow plan notes">Notes: on</button>
+</div>
+
+<!-- =====================================================
+     THEME A
+     ===================================================== -->
+<div class="site site-a" id="siteA">
+  <canvas class="bg-canvas" id="cvA"></canvas>
+  <div class="wrap">
+    <header class="a-nav">
+      <a class="a-logo" href="#"><span class="mini3" data-lit="9"></span>pranjal verma</a>
+      <nav class="a-links">
+        <a href="#a-work">work</a><a href="#a-team">team solves</a><a href="#a-about">about</a><a href="#a-contact">contact</a>
+        <button class="a-toggle" id="aDark">◐ dark</button>
+      </nav>
+    </header>
+
+    <section class="a-hero">
+      <div>
+        <div class="mk" data-step="0">00 · Scramble</div>
+        <h1>I break scrambled problems into <em>moves.</em></h1>
+        <p class="a-sub">I'm Pranjal, a CS undergrad in Lucknow building <strong>AI systems that do real work</strong>: agents that research papers, a matcher that finds the right job, and a triage desk that decides who sees a doctor first.</p>
+        <div class="avail"><i></i>Open to GenAI &amp; SDE roles · graduating 2027</div>
+        <div class="a-ctas">
+          <a class="a-btn pri" href="#a-work">See the work ↓</a>
+          <a class="a-btn" href="#">Resume ↗</a>
+          <a class="a-btn" href="#">GitHub ↗</a>
+          <a class="a-btn" href="#">Email</a>
+        </div>
+        <div class="note"><b>PLAN NOTE · BACKGROUND</b>Move your mouse around the page: the faint sticker grid flips colour under your cursor. Scroll down and the grid slowly settles into solved colour blocks, so the page "solves itself" as you read.</div>
+      </div>
+      <div class="cube-zone">
+        <div class="scene" id="scene"><div class="cube" id="cube"></div></div>
+        <div class="cube-ctrl">
+          <button id="cScramble">Scramble</button>
+          <button id="cSolve">Solve ▶</button>
+        </div>
+        <div class="cube-hint" id="cHint">drag to spin · type <b>R U R' U'</b> (shift = prime)</div>
+        <div class="note"><b>PLAN NOTE · REAL CUBE</b>This is a working cube. Type R, U, F, L, D or B to turn it, then press Solve and it undoes your exact moves. The final site uses a smoother 3D version.</div>
+      </div>
+    </section>
+  </div>
+
+  <div class="strip"><div class="strip-in" id="stripA"></div></div>
+
+  <div class="wrap">
+    <!-- FLAGSHIP -->
+    <section class="a-sec" id="a-work">
+      <div class="mk" data-step="1">01 · Cross — flagship solve</div>
+      <h2>Agents that read papers<br>so you don't have to.</h2>
+      <div class="flag">
+        <div>
+          <span class="chip">Shipped · Solo <span class="ph">confirm</span></span>
+          <h3>Agentic AI Research Assistant</h3>
+          <p><b>Scramble:</b> a loose research question and thousands of papers scattered across sources.</p>
+          <p><b>Solve:</b> a CrewAI crew where each agent has one job. One plans the search, one pulls papers from Semantic Scholar, one embeds them into ChromaDB, and one writes a cited summary with LLaMA 3.3 70B on Groq.</p>
+          <div class="metrics" id="flagMetrics"></div>
+          <div class="steps"><span>query</span><i>→</i><span>planner</span><i>→</i><span>retriever</span><i>→</i><span>chromadb</span><i>→</i><span>analyst</span><i>→</i><span>cited summary</span></div>
+          <div class="links"><a href="#">Case study</a><a href="#">Source</a><a href="#">Live</a></div>
+          <div class="note"><b>PLAN NOTE · NUMBERS</b>Numbers with a dotted underline are <b>samples I made up</b> so you can see the layout. Hover one to see where it lives. Replace them in the <code>PROJECTS</code> list at the top of the file (or later, in each project's <code>.md</code> file) — and replace all of them before the site goes public.</div>
+        </div>
+        <div>
+          <div class="demo">
+            <div class="demo-top"><span>▶ REPLAY OF A REAL RUN</span><button id="replay">↻ replay</button></div>
+            <div class="demo-body">
+              <div class="q" id="dq"></div>
+              <div class="agents">
+                <div class="agent" data-a="0"><b>Planner</b><span>idle</span></div>
+                <div class="agent" data-a="1"><b>Retriever</b><span>idle</span></div>
+                <div class="agent" data-a="2"><b>Embedder</b><span>idle</span></div>
+                <div class="agent" data-a="3"><b>Analyst</b><span>idle</span></div>
+              </div>
+              <div class="papers" id="dp"></div>
+              <div id="ds"></div>
+            </div>
+          </div>
+          <div class="note"><b>PLAN NOTE · DEMO</b>Recruiters get to watch your agents work. It replays a real recorded run, so it's free to host and never breaks when an API limit runs out.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MORE -->
+    <section class="a-sec">
+      <div class="mk" data-step="3">02 · F2L — more solves</div>
+      <h2>More solves.</h2>
+      <p class="a-lead">Each card is generated from one project file. Add a file and a card appears; set <span class="ph">draft: true</span> and it disappears.</p>
+      <div class="cards" id="cards"></div>
+      <template id="oldCards">
+        <article class="card" data-solve>
+          <div class="row"><span class="chip">Shipped</span><span class="mini3 scr"></span></div>
+          <h3>AI Job Recommender &amp; Resume Analyzer</h3>
+          <p>Semantic job matching with embeddings, skill-gap analysis and an AI-generated learning roadmap.</p>
+          <div class="ss"><i>scramble</i><span>resume + job posts</span><i>solve</i><span>ranked matches → gaps → roadmap</span></div>
+          <div class="tags"><span class="tag">FastAPI</span><span class="tag">LangGraph</span><span class="tag">LLaMA 3</span><span class="tag">Supabase</span><span class="tag">React</span></div>
+          <div class="links"><a href="#">Case study</a><a href="#">Source</a></div>
+        </article>
+        <article class="card" data-solve>
+          <div class="row"><span class="chip">Shipped</span><span class="mini3 scr"></span></div>
+          <h3>AI Hospital Triage &amp; Appointments</h3>
+          <p>Predicts likely conditions from symptoms, ranks severity and issues doctor tokens so urgent cases go first.</p>
+          <div class="ss"><i>scramble</i><span>vague symptoms</span><i>solve</i><span>condition → severity → token</span></div>
+          <div class="tags"><span class="tag">Flask</span><span class="tag">Gemini API</span><span class="tag">React</span><span class="tag">REST</span></div>
+          <div class="links"><a href="#">Case study</a><a href="#">Source</a></div>
+        </article>
+        <article class="card" data-solve>
+          <div class="row"><span class="chip win">★ Hackathon winner</span><span class="mini3 scr"></span></div>
+          <h3>Web Dev Hackathon <span class="ph">name</span></h3>
+          <p>What you built in <span class="ph">XX</span> hours with a team of <span class="ph">X</span>, and your part in it.</p>
+          <div class="ss"><i>scramble</i><span><span class="ph">the brief</span></span><i>solve</i><span><span class="ph">what won</span></span></div>
+          <div class="links"><a href="#">Story</a><a href="#">Source</a></div>
+        </article>
+        <article class="card tpl">
+          <span class="chip">Template slot</span>
+          <h3>Next scramble loading…</h3>
+          <p>Copy <code>_template.md</code>, fill in the fields, and your new project appears here with its own case-study page.</p>
+        </article>
+      </template>
+      <div class="note"><b>PLAN NOTE · HOVER</b>Hover a card and its little cube in the corner solves itself.</div>
+    </section>
+
+    <!-- PRINCIPLES -->
+    <section class="a-sec">
+      <div class="mk" data-step="5">03 · OLL — how I solve</div>
+      <h2>How I solve.</h2>
+      <div class="princ">
+        <div class="pr"><span class="mono">R U R' U'</span><h3>Ugly version first.</h3><p>Get it running end to end, then make each step good.</p></div>
+        <div class="pr"><span class="mono">F R U R'</span><h3>One agent, one job.</h3><p>Small, focused steps are easier to test and swap out.</p></div>
+        <div class="pr"><span class="mono">U2 R2</span><h3>Measure, don't guess.</h3><p>If I can't put a number on it, I can't tell if it improved.</p></div>
+        <div class="pr"><span class="mono">L' U L</span><h3>Ship the demo.</h3><p>If people can't click it, it didn't happen.</p></div>
+      </div>
+      <div class="note"><b>PLAN NOTE · YOUR WORDS</b>These are drafts. You rewrite them in your own voice, and that's what stops the site from reading like AI wrote it.</div>
+    </section>
+
+    <!-- TEAM -->
+    <section class="a-sec" id="a-team">
+      <div class="mk" data-step="6">04 · PLL — team solves</div>
+      <h2>Team solves.</h2>
+      <p class="a-lead">No internship yet, so here are the places I've been trusted with real responsibility.</p>
+      <div class="tl">
+        <div class="tli" style="--c:#F2A516"><div class="when"><span class="ph">date</span></div><h3>Web Development Hackathon</h3><div class="role">Winner</div><p>What the challenge was, what we built, and why it won. <span class="ph">details</span></p></div>
+        <div class="tli" style="--c:#E4472B"><div class="when"><span class="ph">dates</span></div><h3>Placement Coordinator · Amity University</h3><div class="role">Coordinator</div><p>Ran pre-placement training and related activities for <span class="ph">XXX</span> students.</p></div>
+        <div class="tli" style="--c:#2D6CDF"><div class="when"><span class="ph">dates</span></div><h3>Peer Mentor</h3><div class="role">Mentor</div><p>Helped <span class="ph">XX</span> juniors set academic goals and build a roadmap to reach them.</p></div>
+        <div class="tli" style="--c:#2F9E5B"><div class="when"><span class="ph">dates</span></div><h3>FOSS United Lucknow &amp; College Tech Club</h3><div class="role">Volunteer</div><p>Helped run <span class="ph">XX</span> meetups and events for the open-source community.</p></div>
+        <div class="tli" style="--c:#E8D22C"><div class="when"><span class="ph">dates</span></div><h3>Class Representative</h3><div class="role">Representative</div><p>The link between <span class="ph">XX</span> students and faculty.</p></div>
+        <div class="tli" style="--c:#6B665B"><div class="when">2023 – 2027</div><h3>B.Tech CSE · Amity University</h3><div class="role">CGPA 8.63 · 50% merit scholarship</div><p>Before that: City Montessori School, Lucknow, Class XII, 93.25%.</p></div>
+      </div>
+      <div class="note"><b>PLAN NOTE · NO INTERNSHIP</b>There's no empty "Experience" heading. Leadership with real numbers takes its place, and the case studies prove the engineering.</div>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="a-sec">
+      <div class="mk" data-step="7">05 · Algs — algorithm sheet</div>
+      <h2>My algorithm sheet.</h2>
+      <div class="algs">
+        <div class="alg"><h3>Main moves <span>daily</span></h3><ul>
+          <li><span class="mini3" data-lit="9"></span>Python</li><li><span class="mini3" data-lit="9"></span>FastAPI</li><li><span class="mini3" data-lit="9"></span>LangGraph · CrewAI</li><li><span class="mini3" data-lit="9"></span>RAG · Prompting</li></ul></div>
+        <div class="alg"><h3>Also fluent <span>often</span></h3><ul>
+          <li><span class="mini3" data-lit="6"></span>Java · C++</li><li><span class="mini3" data-lit="6"></span>SQL · SQLAlchemy</li><li><span class="mini3" data-lit="6"></span>Supabase · ChromaDB</li><li><span class="mini3" data-lit="5"></span>React · JS</li></ul></div>
+        <div class="alg"><h3>Foundations <span>always</span></h3><ul>
+          <li><span class="mini3" data-lit="7"></span>Data structures</li><li><span class="mini3" data-lit="7"></span>Machine learning</li><li><span class="mini3" data-lit="7"></span>REST APIs</li><li><span class="mini3" data-lit="7"></span>Git · GitHub</li></ul></div>
+      </div>
+      <div class="note"><b>PLAN NOTE · SKILLS</b>No logo grid or percentage bars. Each little cube is "solved" to show how often you use that skill.</div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="a-sec" id="a-about">
+      <div class="mk" data-step="8">06 · Off the clock</div>
+      <h2>The person behind the moves.</h2>
+      <div class="about">
+        <figure class="photo">
+          <img src="photo-cutout.png" alt="Pranjal Verma">
+          <figcaption>FIG. 06 · LUCKNOW</figcaption>
+        </figure>
+        <div>
+          <p class="big">I got into AI the same way I got into cubing: something looked impossible, so I broke it into steps until it wasn't. <span class="ph">rewrite in your words</span></p>
+          <p class="a-lead">Right now I'm most interested in agents that plan and use tools, and in making them reliable enough to trust with real work.</p>
+          <div class="hobbies">
+            <div class="hob"><span class="mono">SPEEDCUBING</span><p>PB <b id="pbTile">29</b>s. Still chasing sub-<b id="goalTile">25</b>.</p></div>
+            <div class="hob"><span class="mono">BEATBOXING</span><p>Rhythm first. Then everything else.</p></div>
+            <div class="hob"><span class="mono">UKULELE</span><p>Four strings, questionable singing.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="a-contact">
+      <div class="mk" data-step="9">07 · Solved</div>
+      <h2>Your <em>move.</em></h2>
+      <p class="a-lead">The fastest route is email. I reply within a day.</p>
+      <div class="a-ctas"><a class="a-btn pri" href="#">Copy email</a><a class="a-btn" href="#">LinkedIn ↗</a><a class="a-btn" href="#">GitHub ↗</a><a class="a-btn" href="#">Resume ↓</a></div>
+    </section>
+    <footer class="a-foot">
+      <span>© 2026 Pranjal Verma · designed by me, built with Claude Code</span>
+      <span>Lucknow 26.85°N 80.95°E · psst, press <kbd>space</kbd></span>
+    </footer>
+    <div class="note" style="margin-bottom:90px"><b>PLAN NOTE · EASTER EGG</b>Press SPACE anywhere on this theme to open a speedcubing timer. Press again to stop it.</div>
+  </div>
+  <div class="timer" id="timer"><b id="tVal">0.00</b><span id="tMsg">space to stop</span></div>
+</div>
+
+<!-- =====================================================
+     THEME B
+     ===================================================== -->
+<div class="site site-b" id="siteB">
+  <canvas class="bg-canvas" id="cvB"></canvas>
+  <div class="wrap">
+    <header class="b-nav"><span class="logo">pranjal<b>.run</b></span><nav><span>runs</span><span>operators</span><span>about</span><span>contact</span></nav></header>
+    <section class="b-hero">
+      <div>
+        <div class="b-status"><i></i>RUN ACTIVE · LUCKNOW, IN</div>
+        <h1>Give me a messy task.<br>I'll give it <span>agents.</span></h1>
+        <p>I'm Pranjal Verma, a CS undergrad building multi-agent and LLM systems with CrewAI, LangGraph and FastAPI. Open to GenAI and SDE roles, graduating 2027.</p>
+        <a class="b-btn pri" href="#">view runs ↓</a><a class="b-btn" href="#">resume</a><a class="b-btn" href="#">github</a>
+        <div class="note"><b>PLAN NOTE · CONCEPT B</b>The whole site looks like a live AI agent run. The background is a network where messages travel between nodes, and your cursor joins it. It's a very strong fit for GenAI work, but network visuals are common on AI portfolios, so it feels less personal than A.</div>
+      </div>
+      <div class="term">
+        <div class="term-top"><span><i></i><i></i><i></i> trace · research-crew</span><span id="bClock">00:00.0</span></div>
+        <div class="term-body" id="tBody"></div>
+      </div>
+    </section>
+
+    <section class="b-sec">
+      <div class="b-kicker">// 01 · runs</div>
+      <h2>Completed runs</h2>
+      <p class="lead">Every project is logged as a run: its pipeline, its status, and what came out the other end.</p>
+      <div class="runs">
+        <div class="run"><div class="id">run_003<b>✓ completed</b></div><div><h3>Agentic AI Research Assistant</h3><div class="pipe"><span>planner</span><i>→</i><span>semantic-scholar</span><i>→</i><span>chromadb</span><i>→</i><span>llama-3.3-70b</span></div></div><div class="dur">XX papers<br>XXs</div></div>
+        <div class="run"><div class="id">run_002<b>✓ completed</b></div><div><h3>AI Job Recommender &amp; Resume Analyzer</h3><div class="pipe"><span>resume</span><i>→</i><span>embed</span><i>→</i><span>rank</span><i>→</i><span>gap-analysis</span><i>→</i><span>roadmap</span></div></div><div class="dur">XX jobs<br>XX% match</div></div>
+        <div class="run"><div class="id">run_001<b>✓ completed</b></div><div><h3>AI Hospital Triage &amp; Appointments</h3><div class="pipe"><span>symptoms</span><i>→</i><span>gemini</span><i>→</i><span>severity</span><i>→</i><span>token</span></div></div><div class="dur">XX conditions<br>XXms</div></div>
+        <div class="run queued"><div class="id">run_004<b>◌ queued</b></div><div><h3>Your next project</h3><div class="pipe"><span>_template.md</span><i>→</i><span>new run appears here</span></div></div><div class="dur">—</div></div>
+      </div>
+    </section>
+
+    <section class="b-sec">
+      <div class="b-kicker">// 02 · operators</div>
+      <h2>Human in the loop</h2>
+      <div class="logs">
+        <div><span class="k">role</span>=<span>winner</span> <span class="v">event="Web Dev Hackathon"</span></div>
+        <div><span class="k">role</span>=<span>placement_coordinator</span> <span class="v">students=XXX</span></div>
+        <div><span class="k">role</span>=<span>peer_mentor</span> <span class="v">juniors=XX</span></div>
+        <div><span class="k">role</span>=<span>volunteer</span> <span class="v">org="FOSS United Lucknow, Tech Club"</span></div>
+        <div><span class="k">role</span>=<span>class_rep</span> <span class="v">org="Amity University"</span></div>
+        <div><span class="k">edu</span>=<span>btech_cse</span> <span class="v">cgpa=8.63 scholarship=50% grad=2027</span></div>
+      </div>
+    </section>
+
+    <section class="b-contact">
+      <div class="b-kicker">// 03 · contact</div>
+      <h2>Spawn a<br>conversation.</h2>
+      <div class="cmd"><b>$</b> send_message --to pranjal --via email</div>
+    </section>
+    <footer class="b-foot"><span>© 2026 Pranjal Verma</span><span>exit code 0</span></footer>
+  </div>
+</div>
+
+<!-- =====================================================
+     THEME C
+     ===================================================== -->
+<div class="site site-c" id="siteC">
+  <canvas class="bg-canvas" id="cvC"></canvas>
+  <div class="wrap">
+    <header class="c-nav"><span>PRANJAL VERMA</span><button class="snd" id="snd">🔇 sound off</button></header>
+    <section class="c-hero">
+      <div class="c-side">SIDE A · 96 BPM · LUCKNOW</div>
+      <h1>Pranjal<br><span>Verma</span></h1>
+      <p class="tag2"><b>I build AI systems</b> that research, match and triage. I beatbox between builds.</p>
+      <div class="pads">
+        <button class="pad" data-k="b"><span>B</span><small>KICK</small></button>
+        <button class="pad p2" data-k="t"><span>T</span><small>HAT</small></button>
+        <button class="pad" data-k="k"><span>K</span><small>SNARE</small></button>
+        <span class="hint">Tap the pads or press B T K. Turn sound on at the top right.</span>
+      </div>
+      <div class="note"><b>PLAN NOTE · CONCEPT C</b>Your beatboxing is the theme. The waveform in the background follows the beat and your mouse, and projects are shown as album tracks. It's the most memorable and personal option, but it's harder to link to AI work. Sound stays off unless the visitor turns it on.</div>
+    </section>
+
+    <section class="c-sec">
+      <h2>Selected<br>tracks</h2>
+      <p class="lead">Click a track to open it.</p>
+      <div class="tracks" id="tracks">
+        <div class="track open"><button class="trow"><span class="n">01</span><span class="play">❚❚</span><span><h3>Agentic AI Research Assistant</h3><div class="by">feat. CrewAI, LLaMA 3.3 70B, ChromaDB</div></span><span class="len">XX papers</span></button>
+          <div class="tdetail"><div class="eq"><i></i><i style="animation-delay:.2s"></i><i style="animation-delay:.4s"></i><i style="animation-delay:.1s"></i><i style="animation-delay:.3s"></i><i style="animation-delay:.5s"></i></div>A crew of agents that plans a search, pulls papers from Semantic Scholar, embeds them and writes a cited summary.<div class="pills"><span>case study ↗</span><span>source ↗</span><span>replay run ▶</span></div></div></div>
+        <div class="track"><button class="trow"><span class="n">02</span><span class="play">▶</span><span><h3>AI Job Recommender</h3><div class="by">feat. LangGraph, FastAPI, Supabase</div></span><span class="len">XX% match</span></button>
+          <div class="tdetail"><div class="eq"><i></i><i style="animation-delay:.2s"></i><i style="animation-delay:.4s"></i><i style="animation-delay:.1s"></i><i style="animation-delay:.3s"></i></div>Embedding-based job ranking, skill-gap analysis and AI-generated roadmaps.<div class="pills"><span>case study ↗</span><span>source ↗</span></div></div></div>
+        <div class="track"><button class="trow"><span class="n">03</span><span class="play">▶</span><span><h3>AI Hospital Triage</h3><div class="by">feat. Flask, Gemini, React</div></span><span class="len">XX ms</span></button>
+          <div class="tdetail"><div class="eq"><i></i><i style="animation-delay:.2s"></i><i style="animation-delay:.4s"></i><i style="animation-delay:.1s"></i></div>Symptoms in, severity-ranked appointment tokens out.<div class="pills"><span>case study ↗</span><span>source ↗</span></div></div></div>
+        <div class="track bonus"><button class="trow"><span class="n">04</span><span class="play">+</span><span><h3>Untitled (bonus track)</h3><div class="by">your next project · from _template.md</div></span><span class="len">soon</span></button>
+          <div class="tdetail">A new project file adds a new track here automatically.</div></div>
+      </div>
+    </section>
+
+    <section class="c-sec">
+      <h2>Liner<br>notes</h2>
+      <div class="liner">
+        <div class="lrow"><b>Hackathon</b><span class="dots"></span><span>Winner</span></div>
+        <div class="lrow"><b>Placement</b><span class="dots"></span><span>Coordinator</span></div>
+        <div class="lrow"><b>Juniors</b><span class="dots"></span><span>Peer Mentor</span></div>
+        <div class="lrow"><b>FOSS United Lucknow</b><span class="dots"></span><span>Volunteer</span></div>
+        <div class="lrow"><b>Class</b><span class="dots"></span><span>Representative</span></div>
+        <div class="lrow"><b>Amity University</b><span class="dots"></span><span>B.Tech CSE · 8.63</span></div>
+        <div class="lrow"><b>Also plays</b><span class="dots"></span><span>Ukulele · 3×3 cube</span></div>
+        <div class="lrow"><b>Recorded in</b><span class="dots"></span><span>Lucknow, 2026</span></div>
+      </div>
+    </section>
+
+    <section class="c-contact">
+      <h2>En<span>core?</span></h2>
+      <p>The fastest route is email. I reply within a day.</p>
+      <a class="c-btn" href="#">Email me</a><a class="c-btn o" href="#">LinkedIn</a><a class="c-btn o" href="#">Resume</a>
+    </section>
+    <footer class="c-foot"><span>© 2026 Pranjal Verma</span><span>press B · T · K</span></footer>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   ▓ EDIT EVERYTHING ABOUT YOU HERE ▓
+   In the real site this becomes one small file per project (project-name.md)
+   plus one site.js. Nothing below this block ever needs editing.
+   ─────────────────────────────────────────────────────────────────────── */
+
+const ME = {
+  name:     'Pranjal Verma',
+  email:    'pranjal1772004verma@gmail.com',
+  github:   'https://github.com/PranjalPV',
+  linkedin: 'https://www.linkedin.com/in/pranjal-verma-351546246/',
+  cubePB:   29,          // ← your speedcubing personal best, in seconds
+  cubeGoal: 25           // ← the time you're chasing next
+};
+
+/* ── PROJECTS ───────────────────────────────────────────────────────────
+   TO ADD A PROJECT: copy the whole { … } block, paste it, edit the fields.
+   TO HIDE A PROJECT: change  draft: false  →  draft: true
+   TO REORDER: move the block up or down, or change `order`.
+   TO FEATURE a project as the big one at the top: featured: true
+   sample: true  →  shows a dotted underline meaning "made-up number,
+                    replace me". Set it to false once the number is real.
+   ──────────────────────────────────────────────────────────────────────*/
+const PROJECTS = [
+  {
+    order: 1,
+    draft: false,
+    featured: true,                       // ← the big flagship block
+    title: 'Agentic AI Research Assistant',
+    status: 'Shipped · Solo',
+    blurb: 'A CrewAI crew that plans a search, pulls papers from Semantic Scholar, embeds them in ChromaDB and writes a cited summary.',
+    scramble: 'a loose research question',
+    solve: 'ranked papers → cited summary',
+    stack: ['Python', 'CrewAI', 'LLaMA 3.3 70B', 'ChromaDB', 'RAG'],
+    metrics: [                            // 2–4 numbers. Keep them short.
+      { value: '20',   label: 'papers / query', sample: true },
+      { value: '38s',  label: 'end-to-end',     sample: true },
+      { value: '4',    label: 'agents',         sample: false }   // ← a real one
+    ],
+    links: { study: '#', source: 'https://github.com/PranjalPV', live: '' }
+  },
+  {
+    order: 2,
+    draft: false,
+    featured: false,
+    title: 'AI Job Recommender & Resume Analyzer',
+    status: 'Shipped',
+    blurb: 'Semantic job matching with embeddings, skill-gap analysis and an AI-generated learning roadmap.',
+    scramble: 'a resume + hundreds of job posts',
+    solve: 'ranked matches → gaps → roadmap',
+    stack: ['FastAPI', 'LangGraph', 'LLaMA 3', 'Supabase', 'React'],
+    metrics: [
+      { value: '500+', label: 'jobs indexed',  sample: true },
+      { value: '1.2s', label: 'match time',    sample: true }
+    ],
+    links: { study: '#', source: 'https://github.com/PranjalPV', live: '' }
+  },
+  {
+    order: 3,
+    draft: false,
+    featured: false,
+    title: 'AI Hospital Triage & Appointments',
+    status: 'Shipped',
+    blurb: 'Predicts likely conditions from symptoms, ranks severity and issues doctor tokens so urgent cases go first.',
+    scramble: 'vague symptoms',
+    solve: 'condition → severity → token',
+    stack: ['Flask', 'Gemini API', 'React', 'REST'],
+    metrics: [
+      { value: '12',    label: 'conditions', sample: true },
+      { value: '850ms', label: 'per triage', sample: true }
+    ],
+    links: { study: '#', source: 'https://github.com/PranjalPV', live: '' }
+  },
+  {
+    order: 4,
+    draft: true,                          // ← HIDDEN until you fill it in
+    featured: false,
+    hackathon: true,                      // gives it the gold winner chip
+    title: 'Web Development Hackathon',
+    status: '★ Hackathon winner',
+    blurb: 'What the brief was, what you built, and your part in it.',
+    scramble: 'the brief',
+    solve: 'what won',
+    stack: [],
+    metrics: [],
+    links: { study: '#', source: '', live: '' }
+  }
+];
+/* ═══════════════════ END OF THE PART YOU EDIT ═══════════════════════ */
+
+(() => {
+const STK_LIST_EARLY = ['#E4472B','#F2A516','#F4F1E8','#2F9E5B','#2D6CDF','#E8D22C'];
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+let theme = 'a';
+
+/* ---------------- loader ----------------
+   A full-screen field of blocks that push out of the page in 3D as the page
+   loads, with the counter in a raised tile at the centre. Tune LOAD_MIN,
+   AUTO_ENTER and TILE below.                                                */
+const LOAD_MIN = 2000;        // ms the counter takes to reach 100%
+const AUTO_ENTER = 2400;      // ms after 100% before it enters on its own
+const TILE = 92;              // block size in px
+const NO_LOADER_ON_PHONE = true;                        // ← your choice: phones skip it
+const isPhone = innerWidth < 768 || matchMedia('(pointer:coarse)').matches;
+const LOAD_MSGS = [[0,'scrambling'],[35,'inspecting'],[62,'cross · f2l'],[86,'last layer'],[100,'solved']];
+const SIDES = ['#F0A08E','#F5C77E','#DED6C0','#96CFAF','#9CB8E8','#E9D488'];   // sticker colours, softened
+const host = $('#loaderHost');
+
+function runLoader(){
+  host.innerHTML = '';
+  document.body.classList.add('loading');
+  const wrap = document.createElement('div');
+  wrap.className = 'loader';
+  wrap.innerHTML = `<div class="lfield"></div>
+    <button class="lcore"><b>0%</b><span>loading</span></button>
+    <div class="lmeta"><span class="lstage">scrambling</span><span>·</span><span>press any key to skip</span></div>`;
+  host.appendChild(wrap);
+  const field = wrap.querySelector('.lfield'), core = wrap.querySelector('.lcore'),
+        num = core.querySelector('b'), sub = core.querySelector('span'), stage = wrap.querySelector('.lstage');
+
+  // lay out the grid and work out which way each block should extrude
+  const cols = Math.ceil(innerWidth / TILE) + 1, rows = Math.ceil(innerHeight / TILE) + 1;
+  const ox = (innerWidth - cols * TILE) / 2, oy = (innerHeight - rows * TILE) / 2;
+  const cx = innerWidth / 2, cy = innerHeight / 2;
+  const tiles = [];
+  for(let r = 0; r < rows; r++) for(let c = 0; c < cols; c++){
+    const x = ox + c * TILE, y = oy + r * TILE;
+    const t = document.createElement('div');
+    t.className = 'lt';
+    t.style.cssText = `left:${x + 3}px;top:${y + 3}px;width:${TILE - 6}px;height:${TILE - 6}px`;
+    // blocks near the middle of the screen stand taller; sides point away from centre
+    const depth = 20 + Math.random() * 26;
+    const nx = (x + TILE/2 - cx) / cx, ny = (y + TILE/2 - cy) / cy;
+    t.style.setProperty('--dx', (nx * depth).toFixed(1) + 'px');
+    t.style.setProperty('--dy', (ny * depth).toFixed(1) + 'px');
+    t.style.setProperty('--side', SIDES[(r * 3 + c * 5) % SIDES.length]);
+    t.dataset.at = 3 + Math.random() * 128;      // over 100 = this block never rises, so the field stays calm
+    field.appendChild(t); tiles.push(t);
+  }
+
+  let entered = false;
+  const enterSite = () => {
+    if(entered) return; entered = true;
+    tiles.forEach(t => setTimeout(() => t.classList.remove('up'), Math.random() * 260));
+    core.style.transform = 'translate(-50%,-50%) scale(.6)';
+    core.style.opacity = '0';
+    setTimeout(() => { wrap.classList.add('gone'); document.body.classList.remove('loading'); }, 260);
+    setTimeout(() => wrap.remove(), 900);
+    setTimeout(() => { if(theme === 'a') (window.CUBE3D || CSSCUBE).scramble(); }, 800);
+  };
+  core.onclick = () => { if(core.classList.contains('ready')) enterSite(); };
+  const key = e => { if(!e.repeat){ enterSite(); removeEventListener('keydown', key, true); } };
+  addEventListener('keydown', key, {capture:true});
+
+  const t0 = performance.now();
+  let ready = document.readyState === 'complete';
+  addEventListener('load', () => ready = true);
+  const step = () => {
+    if(entered) return;
+    let p = Math.min(100, ((performance.now() - t0) / LOAD_MIN) * 100);
+    if(!ready) p = Math.min(p, 92);                     // hold until the real page is ready
+    num.textContent = Math.floor(p) + '%';
+    stage.textContent = LOAD_MSGS.filter(m => p >= m[0]).pop()[1];
+    tiles.forEach(t => t.classList.toggle('up', p >= +t.dataset.at));
+    if(p < 100) return requestAnimationFrame(step);
+    core.classList.add('ready'); num.textContent = 'ENTER'; num.style.fontSize = '19px'; sub.textContent = 'click to enter';
+    setTimeout(enterSite, AUTO_ENTER);
+  };
+  if(reduce) return enterSite();
+  requestAnimationFrame(step);
+  setTimeout(enterSite, LOAD_MIN + AUTO_ENTER + 900);   // hard safety net
+}
+if(NO_LOADER_ON_PHONE && isPhone) document.body.classList.remove('loading'); else runLoader();
+
+/* ---------------- switcher ---------------- */
+function setTheme(t){
+  theme = t; document.body.dataset.theme = t;
+  $$('.switcher [data-t]').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  scrollTo({top:0, behavior:'instant'});
+  resizeAll();
+  try{ history.replaceState(null,'','#'+t); }catch(e){}
+}
+$$('.switcher [data-t]').forEach(b => b.onclick = () => setTheme(b.dataset.t));
+$('#ldTiles').onclick = () => { scrollTo({top:0,behavior:'instant'}); runLoader(); };
+$('#noteBtn').onclick = e => { const off = document.body.classList.toggle('no-notes'); e.target.textContent = 'Notes: ' + (off ? 'off' : 'on'); };
+
+/* ---------------- shared canvas sizing ---------------- */
+const canvases = {a: $('#cvA'), b: $('#cvB'), c: $('#cvC')};
+const dpr = Math.min(devicePixelRatio || 1, 2);
+let W = innerWidth, H = innerHeight;
+function resizeAll(){
+  W = innerWidth; H = innerHeight;
+  Object.values(canvases).forEach(c => { c.width = W*dpr; c.height = H*dpr; c.getContext('2d').setTransform(dpr,0,0,dpr,0,0); });
+  buildTiles(); buildNodes();
+}
+addEventListener('resize', resizeAll);
+const mouse = {x:-9999, y:-9999};
+addEventListener('pointermove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+addEventListener('pointerdown', e => { mouse.x = e.clientX; mouse.y = e.clientY; ripple(e.clientX, e.clientY); });
+
+/* =========================================================
+   THEME A
+   ========================================================= */
+const STK = {U:'#F4F1E8', R:'#E4472B', F:'#2F9E5B', D:'#E8D22C', L:'#F2A516', B:'#2D6CDF'};
+const STK_LIST = Object.values(STK);
+const siteA = $('#siteA');
+$('#aDark').onclick = () => { siteA.classList.toggle('dark'); $('#aDark').textContent = siteA.classList.contains('dark') ? '◐ light' : '◐ dark'; };
+
+// mini 3x3 icons
+function mini(el, lit, colors){
+  el.innerHTML = '';
+  for(let i=0;i<9;i++){ const s=document.createElement('i'); if(i<lit) s.style.background = colors ? colors[i] : 'var(--accent)'; el.appendChild(s); }
+}
+$$('.mini3[data-lit]').forEach((m,i) => mini(m, +m.dataset.lit, Array.from({length:9}, (_,k) => STK_LIST[(i*2+k)%6])));
+$$('.mk[data-step]').forEach(m => { const s=document.createElement('span'); s.className='mini3'; m.prepend(s); mini(s, Math.min(9, +m.dataset.step + 1)); });
+// ---- fill in everything that comes from ME ----
+$('#pbTile').textContent = ME.cubePB; $('#goalTile').textContent = ME.cubeGoal;
+$$('.site-a a').forEach(a => {
+  const t = a.textContent.toLowerCase();
+  if(t.includes('github')) a.href = ME.github;
+  else if(t.includes('linkedin')) a.href = ME.linkedin;
+  else if(t.includes('email')) a.href = 'mailto:' + ME.email;
+});
+
+// ---- build project cards + flagship metrics from the PROJECTS list ----
+const sampleTag = m => m.sample
+  ? `<b class="sample" title="Sample number — replace it in the PROJECTS list at the top of this file">${m.value}</b>`
+  : `<b>${m.value}</b>`;
+const live = PROJECTS.filter(p => !p.draft).sort((a,b) => a.order - b.order);
+const flag = live.find(p => p.featured) || live[0];
+if(flag) $('#flagMetrics').innerHTML = flag.metrics.map(m => `<div class="metric">${sampleTag(m)}<span>${m.label}</span></div>`).join('');
+$('#cards').innerHTML = live.filter(p => p !== flag).map(p => `
+  <article class="card" data-solve>
+    <div class="row"><span class="chip${p.hackathon ? ' win' : ''}">${p.status}</span><span class="mini3 scr"></span></div>
+    <h3>${p.title}</h3>
+    <p>${p.blurb}</p>
+    <div class="ss"><i>scramble</i><span>${p.scramble}</span><i>solve</i><span>${p.solve}</span></div>
+    ${p.metrics.length ? `<div class="cmetrics">${p.metrics.map(m => `<span>${sampleTag(m)} ${m.label}</span>`).join('')}</div>` : ''}
+    <div class="tags">${p.stack.map(s => `<span class="tag">${s}</span>`).join('')}</div>
+    <div class="links"><a href="${p.links.study}">Case study</a>${p.links.source ? `<a href="${p.links.source}">Source</a>` : ''}${p.links.live ? `<a href="${p.links.live}">Live</a>` : ''}</div>
+  </article>`).join('') + $('#oldCards').innerHTML.split('<article class="card tpl">')[1].replace(/^/, '<article class="card tpl">');
+$('#cards').insertAdjacentHTML('beforeend', `<div class="note" style="grid-column:1/-1"><b>PLAN NOTE · HIDDEN PROJECT</b>Your hackathon card is written but hidden (<code>draft: true</code>), waiting for the details. Flip it to <code>false</code> and it appears here.</div>`);
+
+// card cubes: scrambled, solve on hover
+$$('.card[data-solve]').forEach((card,ci) => {
+  const m = card.querySelector('.scr');
+  const face = STK_LIST[(ci+1)%6];
+  const scr = () => mini(m, 9, Array.from({length:9}, () => STK_LIST[Math.floor(Math.random()*6)]));
+  scr();
+  card.addEventListener('mouseenter', () => { [...m.children].forEach((s,i) => setTimeout(() => s.style.background = face, i*45)); });
+  card.addEventListener('mouseleave', scr);
+});
+
+// proof strip
+const facts = ['<b>CGPA 8.63</b> · 50% merit scholarship','<b>Hackathon</b> winner','<b>3</b> AI systems shipped','<b>4-agent</b> CrewAI research pipeline','<b>LLaMA 3.3 70B</b> on Groq','<b>Placement</b> coordinator','<b>29s</b> cube PB','<b>FOSS United</b> Lucknow volunteer'];
+$('#stripA').innerHTML = [...facts,...facts].map(f => `<span>${f}</span>`).join('');
+
+// ---- facelet background ----
+let tiles = [];
+function buildTiles(){
+  tiles = [];
+  const cell = 20, gap = 3, block = cell*3 + gap*2, bgap = 12, step = block + bgap;
+  const cols = Math.ceil(W/step)+1, rows = Math.ceil(H/step)+1;
+  const ox = (W - cols*step)/2, oy = (H - rows*step)/2;
+  for(let by=0; by<rows; by++) for(let bx=0; bx<cols; bx++){
+    const blockColor = STK_LIST[(bx*2 + by*3) % 6];
+    for(let r=0;r<3;r++) for(let c=0;c<3;c++){
+      tiles.push({x: ox + bx*step + c*(cell+gap), y: oy + by*step + r*(cell+gap), s: cell,
+        rand: STK_LIST[Math.floor(Math.random()*6)], solved: blockColor, thr: Math.random()*.9 + .05, heat: 0});
+    }
+  }
+}
+function ripple(x,y){
+  if(theme !== 'a') return;
+  tiles.forEach(t => { const d = Math.hypot(t.x - x, t.y - y); if(d < 260) setTimeout(() => t.heat = Math.max(t.heat, 1 - d/300), d*1.4); });
+}
+function drawA(){
+  const ctx = canvases.a.getContext('2d');
+  const cs = getComputedStyle(siteA);
+  const line = cs.getPropertyValue('--line').trim();
+  const dark = siteA.classList.contains('dark');
+  ctx.clearRect(0,0,W,H);
+  const max = document.documentElement.scrollHeight - H;
+  const p = max > 0 ? scrollY / max : 0;
+  for(const t of tiles){
+    const d = Math.hypot(t.x + t.s/2 - mouse.x, t.y + t.s/2 - mouse.y);
+    if(!reduce && d < 120) t.heat = Math.min(1, t.heat + .12 * (1 - d/120));
+    t.heat *= .965;
+    const isSolved = p > t.thr;
+    const col = isSolved ? t.solved : t.rand;
+    // base outline
+    ctx.globalAlpha = dark ? .4 : .45;
+    ctx.fillStyle = line;
+    ctx.fillRect(t.x, t.y, t.s, t.s);
+    // solved tint (grows with scroll)
+    const baseA = isSolved ? (dark ? .06 : .075) : 0;
+    const a = Math.min(.45, baseA + t.heat * .45);
+    if(a > .01){
+      const flip = reduce ? 1 : Math.abs(Math.cos(t.heat * Math.PI));
+      const w = t.s * Math.max(.15, flip);
+      ctx.globalAlpha = a;
+      ctx.fillStyle = col;
+      ctx.fillRect(t.x + (t.s - w)/2, t.y, w, t.s);
+    }
+  }
+  ctx.globalAlpha = 1;
+}
+
+// ---- real 3D cube: 26 separate cubies, animated layer turns ----
+const S = 60;                                  // distance between cubie centres, px
+const I4 = () => [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
+const mul = (a,b) => { const r = new Array(16).fill(0); for(let i=0;i<4;i++) for(let j=0;j<4;j++){ let s=0; for(let k=0;k<4;k++) s += a[i*4+k]*b[k*4+j]; r[i*4+j] = s; } return r; };
+function rotM(ax, ang){ const c = Math.cos(ang), s = Math.sin(ang), m = I4();
+  if(ax===0){ m[5]=c; m[6]=-s; m[9]=s; m[10]=c; }
+  if(ax===1){ m[0]=c; m[2]=s; m[8]=-s; m[10]=c; }
+  if(ax===2){ m[0]=c; m[1]=-s; m[4]=s; m[5]=c; }
+  return m; }
+const transM = (x,y,z) => { const m = I4(); m[3]=x; m[7]=y; m[11]=z; return m; };
+const FLIP = [1,0,0,0, 0,-1,0,0, 0,0,1,0, 0,0,0,1];   // maths (y up) → CSS (y down)
+const cssMat = m => { const M = mul(FLIP, mul(m, FLIP));
+  return 'matrix3d(' + [M[0],M[4],M[8],M[12],M[1],M[5],M[9],M[13],M[2],M[6],M[10],M[14],M[3],M[7],M[11],M[15]].map(v => +v.toFixed(4)).join(',') + ')'; };
+
+const DIRS = [
+  {d:[ 0, 1, 0], t:'rotateX(90deg)',   c:STK.U},
+  {d:[ 0,-1, 0], t:'rotateX(-90deg)',  c:STK.D},
+  {d:[ 0, 0, 1], t:'',                 c:STK.F},
+  {d:[ 0, 0,-1], t:'rotateY(180deg)',  c:STK.B},
+  {d:[ 1, 0, 0], t:'rotateY(90deg)',   c:STK.R},
+  {d:[-1, 0, 0], t:'rotateY(-90deg)',  c:STK.L}
+];
+const cubeEl = $('#cube');
+const cubies = [];
+for(let x=-1;x<=1;x++) for(let y=-1;y<=1;y++) for(let z=-1;z<=1;z++){
+  if(!x && !y && !z) continue;
+  const el = document.createElement('div'); el.className = 'cubie';
+  for(const f of DIRS){
+    const outer = x*f.d[0] + y*f.d[1] + z*f.d[2] === 1;
+    const s = document.createElement('div');
+    s.className = 'cface' + (outer ? ' out' : '');
+    s.style.transform = `${f.t} translateZ(${S/2 - 1}px)`;
+    if(outer) s.style.setProperty('--sticker', f.c);
+    el.appendChild(s);
+  }
+  cubeEl.appendChild(el);
+  cubies.push({p:[x,y,z], O:I4(), el});
+}
+const place = c => c.el.style.transform = cssMat(mul(transM(c.p[0]*S, c.p[1]*S, c.p[2]*S), c.O));
+const render = () => cubies.forEach(place);
+const rot90 = (vec, ax) => { const [x,y,z] = vec; return ax===0 ? [x,-z,y] : ax===1 ? [z,y,-x] : [-y,x,z]; };
+const MOVES = {R:[0,1,-1], L:[0,-1,1], U:[1,1,-1], D:[1,-1,1], F:[2,1,-1], B:[2,-1,1]};
+let moveHist = [], busy = false;
+
+// one animated quarter turn: the whole layer swings round, like a real cube
+function move(name, prime, ms, done){
+  let [ax, layer, dir] = MOVES[name];
+  if(prime) dir = -dir;
+  const layerCubies = cubies.filter(c => c.p[ax] === layer);
+  const target = dir * Math.PI/2, t0 = performance.now(), dur = ms || 190;
+  busy = true;
+  let settled = false;
+  const finish = () => {
+    if(settled) return; settled = true;
+    const R90 = rotM(ax, target), turns = dir === 1 ? 1 : 3;
+    layerCubies.forEach(c => {
+      for(let i=0;i<turns;i++) c.p = rot90(c.p, ax);
+      c.O = mul(R90, c.O).map(v => Math.round(v));       // keep it exact, no drift
+      place(c);
+    });
+    busy = false; done && done();
+  };
+  const step = now => {
+    if(settled) return;
+    const k = reduce ? 1 : Math.min(1, (now - t0) / dur);
+    const R = rotM(ax, target * (1 - Math.pow(1 - k, 3)));
+    layerCubies.forEach(c => c.el.style.transform = cssMat(mul(R, mul(transM(c.p[0]*S, c.p[1]*S, c.p[2]*S), c.O))));
+    if(k < 1) return requestAnimationFrame(step);
+    finish();
+  };
+  requestAnimationFrame(step);
+  // animation frames stop while the tab is in the background, so land the turn anyway
+  setTimeout(finish, dur + 260);
+}
+const hint = $('#cHint');
+function showMoves(){ hint.innerHTML = moveHist.length ? 'moves: <b>' + moveHist.slice(-8).map(m => m.n + (m.p ? "'" : '')).join(' ') + '</b>' + (moveHist.length>8?' …':'') : 'drag to spin · type <b>R U R\' U\'</b> (shift = prime)'; }
+function play(seq, ms, record, done){
+  let i = 0;
+  const tick = () => {
+    if(i >= seq.length){ busy = false; done && done(); return; }
+    const m = seq[i++]; if(record) moveHist.push(m);
+    move(m.n, m.p, ms, tick);
+  };
+  tick();
+}
+function scramble(){
+  if(busy) return;
+  const names = Object.keys(MOVES); let last = '';
+  const seq = [];
+  for(let i=0;i<14;i++){ let n; do{ n = names[Math.floor(Math.random()*6)]; } while(n === last); last = n; seq.push({n, p: Math.random() < .5}); }
+  play(seq, 130, true, showMoves);
+}
+function solve(){
+  if(busy || !moveHist.length) return;
+  const seq = moveHist.slice().reverse().map(m => ({n:m.n, p:!m.p}));
+  moveHist = []; hint.innerHTML = 'solving <b>' + seq.length + '</b> moves…';
+  play(seq, 200, false, () => { hint.innerHTML = '<b>solved.</b> that\'s every scrambled problem, eventually.'; });
+}
+// The CSS cube above is the fallback. If three.js loads, window.CUBE3D takes over
+// (real lighting, shadows, and dragging a single layer to turn it).
+const CSSCUBE = {
+  scramble, solve,
+  key(k, prime){ if(busy) return; move(k, prime); moveHist.push({n:k, p:prime}); nudge(); showMoves(); }
+};
+const cubeApi = () => window.CUBE3D || CSSCUBE;
+window.CSSCUBE = CSSCUBE;
+$('#cScramble').onclick = () => cubeApi().scramble();
+$('#cSolve').onclick = () => cubeApi().solve();
+render();
+
+// drag rotation + idle wobble
+let rx = -28, ry = -38, vx = 0, vy = .12, dragging = false, lx = 0, ly = 0, bump = 0;
+function nudge(){ bump = 1; }
+const scene = $('#scene');
+scene.addEventListener('pointerdown', e => { dragging = true; lx = e.clientX; ly = e.clientY; scene.setPointerCapture(e.pointerId); });
+scene.addEventListener('pointermove', e => { if(!dragging) return; vy = (e.clientX - lx)*.35; vx = -(e.clientY - ly)*.35; ry += vy; rx += vx; lx = e.clientX; ly = e.clientY; });
+scene.addEventListener('pointerup', () => dragging = false);
+function drawCube(){
+  if(window.CUBE3D) return;                 // three.js is driving the cube instead
+  if(!dragging){ vy *= .95; vx *= .9; ry += vy + (reduce ? 0 : .08); rx += vx; rx += (-28 - rx) * .02; }
+  bump *= .85;
+  cubeEl.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) scale(${1 + bump*.03})`;
+}
+
+// research demo
+const Q = 'How are LLM agents evaluated on long-horizon tasks?';
+let demoRun = 0;
+function runDemo(){
+  const id = ++demoRun;
+  const agents = $$('.agent'); const dq = $('#dq'), dp = $('#dp'), ds = $('#ds');
+  agents.forEach(a => { a.className = 'agent'; a.querySelector('span').textContent = 'idle'; });
+  dq.textContent = ''; dp.innerHTML = ''; ds.innerHTML = '';
+  const later = (ms, fn) => setTimeout(() => id === demoRun && fn(), ms);
+  let t = 0;
+  for(let i=1;i<=Q.length;i++) later(t += 28, () => dq.textContent = Q.slice(0,i));
+  const set = (i, cls, txt) => { agents[i].className = 'agent ' + cls; agents[i].querySelector('span').textContent = txt; };
+  later(t += 400, () => set(0,'run','decomposing…'));
+  later(t += 1100, () => { set(0,'done','3 sub-queries'); set(1,'run','searching…'); });
+  ['Paper title from the real run','Second retrieved paper','Third retrieved paper'].forEach((p,i) =>
+    later(t += 550, () => dp.insertAdjacentHTML('beforeend', `<div class="paper"><span>[${i+1}] ${p}</span><small>2024 · cited 41</small></div>`)));
+  later(t += 500, () => { set(1,'done','20 papers'); set(2,'run','embedding…'); });
+  later(t += 1100, () => { set(2,'done','96 chunks'); set(3,'run','writing…'); });
+  later(t += 1300, () => { set(3,'done','summary ✓'); ds.innerHTML = '<div class="summary">The recorded summary from the real run goes here, with inline citations<sup>[1]</sup><sup>[3]</sup> that link to the papers above.</div>'; });
+}
+$('#replay').onclick = runDemo;
+const demoObs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting && !e.target.dataset.done){ e.target.dataset.done = 1; runDemo(); } }), {threshold:.4});
+demoObs.observe($('.demo'));
+
+// space timer
+const timer = $('#timer'), tVal = $('#tVal'), tMsg = $('#tMsg');
+let tStart = 0, tRunning = false, tRaf;
+function tLoop(){ tVal.textContent = ((performance.now() - tStart)/1000).toFixed(2); tRaf = requestAnimationFrame(tLoop); }
+
+addEventListener('keydown', e => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if(tag === 'input' || tag === 'textarea') return;
+  if(theme === 'a'){
+    if(e.code === 'Space'){
+      e.preventDefault();
+      if(!timer.classList.contains('on')){ timer.classList.add('on'); tStart = performance.now(); tRunning = true; tMsg.textContent = 'space to stop'; tLoop(); }
+      else if(tRunning){
+        tRunning = false; cancelAnimationFrame(tRaf);
+        const secs = (performance.now() - tStart)/1000;
+        tMsg.textContent = (secs < ME.cubePB ? 'Faster than me. ' : '') + 'My PB is ' + ME.cubePB + '.00s · space to close';
+      }
+      else timer.classList.remove('on');
+      return;
+    }
+    const k = e.key.toUpperCase();
+    if(MOVES[k] && !e.ctrlKey && !e.metaKey && !e.altKey) cubeApi().key(k, e.shiftKey);
+  }
+  if(theme === 'c'){ const k = e.key.toLowerCase(); if('btk'.includes(k) && k.length===1) hit(k); }
+});
+
+console.log('%c┌───┬───┬───┐\n│  pranjal  │  You opened devtools. Respect.\n└───┴───┴───┘  Hiring? The email button is in the footer.', 'font-family:monospace;color:#E4472B');
+
+/* =========================================================
+   THEME B
+   ========================================================= */
+let nodes = [], packets = [];
+function buildNodes(){
+  const count = Math.round(Math.min(70, W*H/26000));
+  nodes = Array.from({length:count}, () => ({x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25, r:Math.random()*1.6+1}));
+}
+function drawB(){
+  const ctx = canvases.b.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  const all = [...nodes, {x:mouse.x, y:mouse.y, cursor:true}];
+  for(const n of nodes){ if(!reduce){ n.x += n.vx; n.y += n.vy; } if(n.x<0||n.x>W) n.vx*=-1; if(n.y<0||n.y>H) n.vy*=-1; }
+  const edges = [];
+  for(let i=0;i<all.length;i++) for(let j=i+1;j<all.length;j++){
+    const a = all[i], b = all[j], d = Math.hypot(a.x-b.x, a.y-b.y);
+    const lim = (a.cursor||b.cursor) ? 210 : 150;
+    if(d < lim){
+      const cur = a.cursor || b.cursor;
+      ctx.strokeStyle = cur ? `rgba(198,242,78,${.5*(1-d/lim)})` : `rgba(131,139,128,${.22*(1-d/lim)})`;
+      ctx.lineWidth = cur ? 1.2 : 1;
+      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+      edges.push([a,b]);
+    }
+  }
+  if(!reduce && edges.length && Math.random() < .12) { const e = edges[Math.floor(Math.random()*edges.length)]; packets.push({a:e[0], b:e[1], t:0, c: Math.random()<.5 ? '#C6F24E' : '#7CD4FF'}); }
+  packets = packets.filter(p => p.t <= 1);
+  for(const p of packets){ p.t += .018; const x = p.a.x + (p.b.x-p.a.x)*p.t, y = p.a.y + (p.b.y-p.a.y)*p.t; ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(x,y,2.2,0,7); ctx.fill(); }
+  for(const n of nodes){ ctx.fillStyle = 'rgba(233,236,230,.45)'; ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,7); ctx.fill(); }
+}
+const TRACE = [
+  ['user','#E9ECE6','query: "How are LLM agents evaluated on long-horizon tasks?"'],
+  ['planner','#C6F24E','decomposing into 3 sub-queries'],
+  ['planner','#C6F24E','→ handoff to retriever'],
+  ['retriever','#7CD4FF','GET semantic-scholar /paper/search (limit=20)'],
+  ['retriever','#7CD4FF','200 OK · XX papers · filtering by year ≥ 2023'],
+  ['embedder','#FF8F6B','chunking XX abstracts → chromadb.add()'],
+  ['embedder','#FF8F6B','top-k=8 by cosine similarity'],
+  ['analyst','#C6F24E','llama-3.3-70b · writing summary with citations'],
+  ['analyst','#C6F24E','✓ summary ready · 5 citations'],
+  ['system','#838B80','run completed · exit 0'],
+];
+let traceI = 0, bT0 = performance.now();
+function traceStep(){
+  if(theme === 'b'){
+    const body = $('#tBody');
+    if(traceI === 0){ body.innerHTML = ''; bT0 = performance.now(); }
+    const [who, col, msg] = TRACE[traceI];
+    const ts = ((performance.now()-bT0)/1000).toFixed(1).padStart(5,'0');
+    body.insertAdjacentHTML('beforeend', `<div class="tline"><span class="t">${ts}</span><span class="who" style="color:${col}">[${who}]</span><span>${msg}</span></div>`);
+    while(body.children.length > 13) body.firstChild.remove();
+    traceI = (traceI + 1) % TRACE.length;
+  }
+  setTimeout(traceStep, traceI === 0 ? 2600 : 750 + Math.random()*500);
+}
+traceStep();
+setInterval(() => { if(theme==='b') $('#bClock').textContent = ((performance.now()-bT0)/1000).toFixed(1).padStart(6,'0'); }, 100);
+
+/* =========================================================
+   THEME C
+   ========================================================= */
+let pulse = 0, audio = null, soundOn = false;
+$('#snd').onclick = e => { soundOn = !soundOn; e.currentTarget.classList.toggle('on', soundOn); e.currentTarget.textContent = soundOn ? '🔊 sound on' : '🔇 sound off'; if(soundOn && !audio) audio = new (window.AudioContext || window.webkitAudioContext)(); };
+function noise(dur){ const b = audio.createBuffer(1, audio.sampleRate*dur, audio.sampleRate), d = b.getChannelData(0); for(let i=0;i<d.length;i++) d[i] = Math.random()*2-1; const s = audio.createBufferSource(); s.buffer = b; return s; }
+function sound(k){
+  if(!soundOn || !audio) return;
+  const t = audio.currentTime, g = audio.createGain(); g.connect(audio.destination);
+  if(k === 'b'){ const o = audio.createOscillator(); o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(40,t+.15); g.gain.setValueAtTime(1,t); g.gain.exponentialRampToValueAtTime(.001,t+.25); o.connect(g); o.start(t); o.stop(t+.25); }
+  else { const n = noise(.2), f = audio.createBiquadFilter(); f.type = k==='t' ? 'highpass' : 'bandpass'; f.frequency.value = k==='t' ? 7000 : 1800; g.gain.setValueAtTime(k==='t'?.35:.7,t); g.gain.exponentialRampToValueAtTime(.001,t+(k==='t'?.05:.18)); n.connect(f); f.connect(g); n.start(t); n.stop(t+.2); }
+}
+function hit(k){
+  const pad = document.querySelector(`.pad[data-k="${k}"]`);
+  pad.classList.add('hit'); setTimeout(() => pad.classList.remove('hit'), 120);
+  pulse = k === 'b' ? 1 : k === 'k' ? .75 : .45; sound(k);
+}
+$$('.pad').forEach(p => p.onclick = () => hit(p.dataset.k));
+$$('.trow').forEach(r => r.onclick = () => {
+  const tr = r.parentElement, open = tr.classList.contains('open');
+  $$('.track').forEach(x => { x.classList.remove('open'); const pl = x.querySelector('.play'); if(pl.textContent !== '+') pl.textContent = '▶'; });
+  if(!open){ tr.classList.add('open'); const pl = tr.querySelector('.play'); if(pl.textContent !== '+') pl.textContent = '❚❚'; hit('b'); }
+});
+function drawC(now){
+  const ctx = canvases.c.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  const t = now/1000, beat = (t * 96/60) % 1, auto = reduce ? 0 : Math.pow(1-beat, 6) * .35;
+  pulse *= .9;
+  const bw = 7, gap = 4, n = Math.ceil(W/(bw+gap)), base = H*.34;
+  for(let i=0;i<n;i++){
+    const x = i*(bw+gap);
+    const wave = reduce ? .4 : Math.abs(Math.sin(i*.13 + t*1.3) * Math.sin(i*.041 - t*.7));
+    const md = Math.abs(x - mouse.x), boost = Math.exp(-(md*md)/(2*110*110)) * .8;
+    const h = base * (.15 + wave*.55 + boost + (auto + pulse) * (.5 + .5*Math.sin(i*.3)));
+    ctx.fillStyle = boost > .25 ? `rgba(255,212,59,${.18 + boost*.25})` : 'rgba(244,234,219,.09)';
+    ctx.fillRect(x, H - h, bw, h);
+    ctx.fillStyle = 'rgba(244,234,219,.04)';
+    ctx.fillRect(x, 0, bw, h*.25);
+  }
+}
+
+/* ---------------- main loop ---------------- */
+function frame(now){
+  if(!document.hidden){
+    if(theme === 'a'){ drawA(); drawCube(); }
+    else if(theme === 'b') drawB();
+    else drawC(now);
+  }
+  requestAnimationFrame(frame);
+}
+resizeAll();
+const start = (location.hash || '#a').slice(1);
+setTheme(['a','b','c'].includes(start) ? start : 'a');
+requestAnimationFrame(frame);
+})();
+</script>
+
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+/* ─────────────────────────────────────────────────────────────────────────
+   THE REAL 3D CUBE (three.js)
+   Real lights, soft shadows, plastic sheen — and you can grab one layer and
+   drag it round. If this fails to load (no network, no WebGL) the CSS cube
+   underneath stays, so the page never breaks.
+   ───────────────────────────────────────────────────────────────────────── */
+try {
+const THREE = await import('three');
+const { RoundedBoxGeometry } = await import('three/addons/geometries/RoundedBoxGeometry.js');
+
+const scene0 = document.querySelector('#scene');
+const hint = document.querySelector('#cHint');
+const STK = {U:'#F4F1E8', R:'#E4472B', F:'#2F9E5B', D:'#E8D22C', L:'#F2A516', B:'#2D6CDF'};
+const FACES = [
+  {d:[ 0, 1, 0], c:STK.U}, {d:[ 0,-1, 0], c:STK.D}, {d:[ 0, 0, 1], c:STK.F},
+  {d:[ 0, 0,-1], c:STK.B}, {d:[ 1, 0, 0], c:STK.R}, {d:[-1, 0, 0], c:STK.L}
+];
+
+// rounded-square sticker drawn once per colour
+const stickerTex = col => {
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const g = c.getContext('2d'); g.fillStyle = col;
+  const r = 22; g.beginPath(); g.roundRect(6, 6, 116, 116, r); g.fill();
+  const t = new THREE.CanvasTexture(c); t.anisotropy = 4; return t;
+};
+const texes = {}; for(const f of FACES) texes[f.c] = texes[f.c] || stickerTex(f.c);
+
+const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.domElement.style.cssText = 'width:100%;height:100%;display:block;touch-action:none;cursor:grab';
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+camera.position.set(5.2, 4.4, 6.4); camera.lookAt(0, 0, 0);
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x9a8f7a, 1.15));
+const key = new THREE.DirectionalLight(0xffffff, 2.1);
+key.position.set(5, 9, 6); key.castShadow = true;
+key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 4; key.shadow.bias = -0.0015;
+Object.assign(key.shadow.camera, {left:-5, right:5, top:5, bottom:-5, near:1, far:24});
+scene.add(key);
+const fill = new THREE.DirectionalLight(0xffffff, 0.5);
+fill.position.set(-6, 3, -4); scene.add(fill);
+
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.ShadowMaterial({opacity:0.17}));
+floor.rotation.x = -Math.PI/2; floor.position.y = -2.45; floor.receiveShadow = true; scene.add(floor);
+
+const root = new THREE.Group(); scene.add(root);
+const body = new RoundedBoxGeometry(0.97, 0.97, 0.97, 4, 0.1);
+const plastic = new THREE.MeshStandardMaterial({color:0x101010, roughness:0.55, metalness:0.05});
+const cubies = [];
+for(let x=-1;x<=1;x++) for(let y=-1;y<=1;y++) for(let z=-1;z<=1;z++){
+  if(!x && !y && !z) continue;
+  const g = new THREE.Group();
+  const m = new THREE.Mesh(body, plastic); m.castShadow = m.receiveShadow = true; g.add(m);
+  for(const f of FACES){
+    if(x*f.d[0] + y*f.d[1] + z*f.d[2] !== 1) continue;
+    const s = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.9, 0.9),
+      new THREE.MeshStandardMaterial({map:texes[f.c], transparent:true, roughness:0.28, metalness:0.02})
+    );
+    s.position.set(f.d[0]*0.492, f.d[1]*0.492, f.d[2]*0.492);
+    if(f.d[1]) s.rotation.x = -f.d[1] * Math.PI/2; else if(f.d[0]) s.rotation.y = f.d[0] * Math.PI/2;
+    else if(f.d[2] < 0) s.rotation.y = Math.PI;
+    g.add(s);
+  }
+  g.position.set(x, y, z);
+  root.add(g);
+  cubies.push({p:[x,y,z], q:new THREE.Quaternion(), g});
+}
+
+function fit(){
+  const r = scene0.getBoundingClientRect();
+  renderer.setSize(r.width, r.height, false);
+  camera.aspect = r.width / r.height; camera.updateProjectionMatrix();
+  camera.lookAt(0, 0, 0); camera.updateMatrixWorld(true);
+}
+document.querySelector('#cube').style.display = 'none';       // retire the CSS cube
+scene0.appendChild(renderer.domElement);
+fit(); addEventListener('resize', fit);
+
+/* ---- state ---- */
+const AX = [new THREE.Vector3(1,0,0), new THREE.Vector3(0,1,0), new THREE.Vector3(0,0,1)];
+const MOVES = {R:[0,1,-1], L:[0,-1,1], U:[1,1,-1], D:[1,-1,1], F:[2,1,-1], B:[2,-1,1]};
+const rot90 = (v, ax) => { const [x,y,z] = v; return ax===0 ? [x,-z,y] : ax===1 ? [z,y,-x] : [-y,x,z]; };
+let moveHist = [], busy = false, rotY = -0.62, rotX = 0.42, spin = 0.0016;
+
+function showMoves(){
+  hint.innerHTML = moveHist.length
+    ? 'moves: <b>' + moveHist.slice(-8).map(m => m.label).join(' ') + '</b>' + (moveHist.length > 8 ? ' …' : '')
+    : 'drag the cube to spin · drag a layer to turn it · type <b>R U R\' U\'</b>';
+}
+// every turn is stored as axis/layer/direction, so even a middle-slice drag can be undone
+const record = (ax, layer, dir, label) => moveHist.push({ax, layer, dir, label});
+const SLICE = ['M', 'E', 'S'];
+const labelFor = (ax, layer, dir) => {
+  const name = Object.keys(MOVES).find(k => MOVES[k][0] === ax && MOVES[k][1] === layer);
+  if(!name) return SLICE[ax] + (dir === 1 ? "'" : '');
+  return name + (Math.sign(dir) !== Math.sign(MOVES[name][2]) ? "'" : '');
+};
+showMoves();
+
+function turn(ax, layer, dir, ms, done){
+  if(busy) return; busy = true;
+  const group = cubies.filter(c => c.p[ax] === layer);
+  const pivot = new THREE.Group(); root.add(pivot);
+  group.forEach(c => pivot.attach(c.g));
+  const target = dir * Math.PI/2, t0 = performance.now(), dur = ms || 210;
+  let settled = false;
+  const land = () => {
+    if(settled) return; settled = true;
+    const q90 = new THREE.Quaternion().setFromAxisAngle(AX[ax], target);
+    group.forEach(c => {
+      for(let i=0;i<(dir === 1 ? 1 : 3);i++) c.p = rot90(c.p, ax);
+      c.q.premultiply(q90).normalize();
+      root.attach(c.g);
+      c.g.position.set(c.p[0], c.p[1], c.p[2]);
+      c.g.quaternion.copy(c.q);
+    });
+    root.remove(pivot); busy = false; done && done();
+  };
+  const step = now => {
+    if(settled) return;
+    const k = Math.min(1, (now - t0) / dur);
+    pivot.setRotationFromAxisAngle(AX[ax], target * (1 - Math.pow(1 - k, 3)));
+    if(k < 1) return requestAnimationFrame(step);
+    land();
+  };
+  requestAnimationFrame(step);
+  setTimeout(land, dur + 300);                 // background-tab safety net
+}
+
+function play(seq, ms, keep, done){
+  let i = 0;
+  const tick = () => {
+    if(i >= seq.length){ done && done(); return; }
+    const m = seq[i++];
+    if(keep) record(m.ax, m.layer, m.dir, m.label);
+    turn(m.ax, m.layer, m.dir, ms, tick);
+  };
+  tick();
+}
+const api = {
+  scramble(){
+    if(busy) return;
+    const names = Object.keys(MOVES); let last = '', seq = [];
+    for(let i=0;i<14;i++){
+      let n; do { n = names[(Math.random()*6)|0]; } while(n === last); last = n;
+      const [ax, layer, base] = MOVES[n], dir = Math.random() < .5 ? base : -base;
+      seq.push({ax, layer, dir, label: labelFor(ax, layer, dir)});
+    }
+    play(seq, 140, true, showMoves);
+  },
+  solve(){
+    if(busy || !moveHist.length) return;
+    const seq = moveHist.slice().reverse().map(m => ({ax:m.ax, layer:m.layer, dir:-m.dir}));
+    moveHist = []; hint.innerHTML = 'solving <b>' + seq.length + '</b> moves…';
+    play(seq, 200, false, () => hint.innerHTML = '<b>solved.</b> that\'s every scrambled problem, eventually.');
+  },
+  key(k, prime){
+    if(busy || !MOVES[k]) return;
+    const [ax, layer, base] = MOVES[k], dir = prime ? -base : base;
+    record(ax, layer, dir, k + (prime ? "'" : '')); showMoves();
+    turn(ax, layer, dir);
+  }
+};
+
+/* ---- pointer: drag the cube to spin, drag a sticker to turn that layer ---- */
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+let drag = null;
+const toNdc = e => { const r = renderer.domElement.getBoundingClientRect(); camera.updateMatrixWorld(true);
+  ndc.set(((e.clientX-r.left)/r.width)*2-1, -((e.clientY-r.top)/r.height)*2+1); return ndc; };
+
+renderer.domElement.addEventListener('pointerdown', e => {
+  try { renderer.domElement.setPointerCapture(e.pointerId); } catch(_) {}
+  renderer.domElement.style.cursor = 'grabbing';
+  ray.setFromCamera(toNdc(e), camera);
+  const hit = ray.intersectObjects(root.children, true)[0];
+  drag = {x:e.clientX, y:e.clientY, sx:e.clientX, sy:e.clientY, turned:false, cubie:null, normal:null};
+  if(hit){
+    const n = hit.face.normal.clone().applyQuaternion(hit.object.getWorldQuaternion(new THREE.Quaternion()));
+    n.applyQuaternion(root.quaternion.clone().invert());          // into cube space
+    const ax = ['x','y','z'].map(k2 => Math.abs(n[k2])).indexOf(Math.max(Math.abs(n.x), Math.abs(n.y), Math.abs(n.z)));
+    const nrm = [0,0,0]; nrm[ax] = Math.sign(n.getComponent(ax));
+    const owner = cubies.find(c => c.g === hit.object.parent);
+    if(owner){ drag.cubie = owner; drag.normal = nrm; }
+  }
+});
+renderer.domElement.addEventListener('pointermove', e => {
+  if(!drag) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;          // since last event: orbiting
+  const tx = e.clientX - drag.sx, ty = e.clientY - drag.sy;        // since pointerdown: turning
+  if(drag.cubie && !drag.turned && !busy && Math.hypot(tx, ty) > 14){
+    drag.turned = true;
+    // drag direction in world space, then into cube space, then onto the face plane
+    const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
+    const up = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
+    const dir3 = right.multiplyScalar(tx).add(up.multiplyScalar(-ty))
+      .applyQuaternion(root.quaternion.clone().invert()).normalize();
+    const n = new THREE.Vector3(...drag.normal);
+    dir3.sub(n.clone().multiplyScalar(dir3.dot(n))).normalize();
+    const axisV = new THREE.Vector3().crossVectors(n, dir3);
+    const ax = [Math.abs(axisV.x), Math.abs(axisV.y), Math.abs(axisV.z)]
+      .reduce((b, v, i, arr) => v > arr[b] ? i : b, 0);
+    const sign = Math.sign(axisV.getComponent(ax)) || 1;
+    const layer = drag.cubie.p[ax];
+    record(ax, layer, sign, labelFor(ax, layer, sign));   // logged so Solve can undo it
+    showMoves();
+    turn(ax, layer, sign);
+  } else if(!drag.cubie || !drag.turned){
+    if(!drag.cubie){ rotY += dx * 0.011; rotX = Math.max(-1.2, Math.min(1.2, rotX + dy * 0.011)); }
+  }
+  drag.x = e.clientX; drag.y = e.clientY;
+});
+const endDrag = () => { drag = null; renderer.domElement.style.cursor = 'grab'; };
+renderer.domElement.addEventListener('pointerup', endDrag);
+renderer.domElement.addEventListener('pointercancel', endDrag);
+
+/* ---- render loop ---- */
+const reduceMo = matchMedia('(prefers-reduced-motion: reduce)').matches;
+(function loop(){
+  requestAnimationFrame(loop);
+  if(document.hidden) return;
+  if(!drag && !reduceMo) rotY += spin;
+  root.rotation.set(rotX, rotY, 0);
+  renderer.render(scene, camera);
+})();
+
+api.debug = () => ({busy, hist: moveHist.map(m => m.label).join(' '), drag: drag && {cubie: drag.cubie && drag.cubie.p, normal: drag.normal, turned: drag.turned}});
+api.hash = () => cubies.map(c => c.p.join('')).join('|');
+api.probe = (x, y) => {
+  ray.setFromCamera(toNdc({clientX:x, clientY:y}), camera);
+  const hit = ray.intersectObjects(root.children, true)[0];
+  if(!hit) return {hit:false, ndc:[ndc.x.toFixed(2), ndc.y.toFixed(2)],
+    rectW: renderer.domElement.getBoundingClientRect().width,
+    kids: root.children.length, all: ray.intersectObject(scene, true).length,
+    camPos: camera.position.toArray(), origin: ray.ray.origin.toArray().map(v=>+v.toFixed(2)), dir: ray.ray.direction.toArray().map(v=>+v.toFixed(2))};
+  const owner = cubies.find(c => c.g === hit.object.parent);
+  return {hit:true, hasFace: !!hit.face, owner: owner && owner.p, objType: hit.object.geometry.type};
+};
+window.CUBE3D = api;
+hint.innerHTML = 'drag the cube to spin · <b>drag a layer to turn it</b> · or type R U R\' U\'';
+} catch (err) {
+  console.warn('three.js cube unavailable, using the CSS cube instead:', err);
+}
+</script>
+</body>
+</html>
