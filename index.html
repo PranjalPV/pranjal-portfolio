@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Portfolio Concept Preview</title>
+<title>Pranjal Verma — AI & Software Engineer Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&family=Geist:wght@400;500;700&family=Geist+Mono:wght@400;600&family=Big+Shoulders+Display:wght@700;900&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
@@ -682,7 +682,7 @@ body.no-notes .note{display:none}
 
 const ME = {
   name:     'Pranjal Verma',
-  email:    'pranjal1772004verma@gmail.com',
+  email:    'pranjal17112004verma@gmail.com',
   github:   'https://github.com/PranjalPV',
   linkedin: 'https://www.linkedin.com/in/pranjal-verma-351546246/',
   cubePB:   29,          // ← your speedcubing personal best, in seconds
@@ -892,11 +892,16 @@ $$('.mini3[data-lit]').forEach((m,i) => mini(m, +m.dataset.lit, Array.from({leng
 $$('.mk[data-step]').forEach(m => { const s=document.createElement('span'); s.className='mini3'; m.prepend(s); mini(s, Math.min(9, +m.dataset.step + 1)); });
 // ---- fill in everything that comes from ME ----
 $('#pbTile').textContent = ME.cubePB; $('#goalTile').textContent = ME.cubeGoal;
-$$('.site-a a').forEach(a => {
+$$('.site a').forEach(a => {
   const t = a.textContent.toLowerCase();
   if(t.includes('github')) a.href = ME.github;
   else if(t.includes('linkedin')) a.href = ME.linkedin;
   else if(t.includes('email')) a.href = 'mailto:' + ME.email;
+});
+$$('.b-contact .cmd').forEach(el => {
+  el.style.cursor = 'pointer';
+  el.title = 'Click to send email';
+  el.onclick = () => { location.href = 'mailto:' + ME.email; };
 });
 
 // ---- build project cards + flagship metrics from the PROJECTS list ----

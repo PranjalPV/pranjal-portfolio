@@ -9,7 +9,7 @@
 - **Concept: A — "Scramble → Solve"** (the cube). B and C are dropped.
 - **GitHub:** https://github.com/PranjalPV
 - **LinkedIn:** https://www.linkedin.com/in/pranjal-verma-351546246/
-- **Email:** pranjal1772004verma@gmail.com
+- **Email:** pranjal17112004verma@gmail.com
 - **Photo:** the phone screenshot has been cropped and the background removed. Files: `photo-cutout.png` (transparent), plus versions on paper, orange and dark backgrounds. It goes in the About section, and a small version goes in the footer or on the contact card.
 - **Hackathon:** the card exists but stays hidden (`draft: true`) until Pranjal fills in the details.
 - **Cube: three.js** (confirmed). Real lights, soft shadow, plastic stickers, and you can **drag a single layer to turn it**. About 150 KB, loaded after the page is usable. If it fails to load, a hand-built CSS 3D cube takes over, so the hero never looks broken.
